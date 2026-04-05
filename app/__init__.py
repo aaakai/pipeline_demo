@@ -1,0 +1,1 @@
+"""Pipeline demo application package."""
