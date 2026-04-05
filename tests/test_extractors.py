@@ -27,6 +27,8 @@ def test_ao3_extraction(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, ao3_htm
     )
     assert document.title == "AO3 Test Work"
     assert "Hello there" in document.raw_text
+    assert "Opening note" not in document.raw_text
+    assert "Ending note" not in document.raw_text
     assert "Should not be extracted" not in document.raw_text
 
 

@@ -8,11 +8,21 @@
         <h2>Ignored Preface</h2>
       </div>
       <div id="chapters">
+        <div class="chapter preface group">
+          <div class="notes module userstuff">
+            <p>Opening note that should not be extracted.</p>
+          </div>
+        </div>
         <div class="chapter">
-          <div class="userstuff module">
+          <div class="userstuff module" role="article">
             <p>"Hello there," she said.</p>
             <p>He looked up from the console and smiled.</p>
             <p>"We finally made it."</p>
+          </div>
+        </div>
+        <div class="chapter preface group">
+          <div class="end notes module userstuff">
+            <p>Ending note that should not be extracted either.</p>
           </div>
         </div>
       </div>

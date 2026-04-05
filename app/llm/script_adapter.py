@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import re
+from typing import Any
 
 import requests
 from pydantic import ValidationError
@@ -14,6 +15,46 @@ from app.schemas import Character, ScriptManifest, ScriptSegment
 from app.utils import detect_language
 
 LOGGER = logging.getLogger("pipeline_demo")
+SPEECH_VERBS = (
+    "说",
+    "问",
+    "答",
+    "道",
+    "喊",
+    "叫",
+    "笑",
+    "表示",
+    "嘀咕",
+    "低声",
+    "开口",
+    "said",
+    "asked",
+    "replied",
+    "whispered",
+    "murmured",
+)
+STOPWORD_NAMES = {
+    "他",
+    "她",
+    "他们",
+    "她们",
+    "我们",
+    "你",
+    "你们",
+    "我",
+    "大家",
+    "有人",
+    "自己",
+    "对方",
+    "时候",
+    "声音",
+    "平安夜",
+    "Chapter",
+    "Text",
+}
+LATIN_NAME_PATTERN = r"(?<![A-Za-z0-9_-])[A-Z][A-Za-z0-9_-]{1,30}(?![A-Za-z0-9_-])"
+CJK_NAME_PATTERN = r"[\u4e00-\u9fff]{2,4}"
+TRIMMABLE_CJK_EDGE_CHARS = "说道问答喊叫笑看想走望点听站捏抱开回拿给将把着了过地得的里上下去来进出很也还又都在向跟和与让便正就却并"
 
 SYSTEM_PROMPT = """You convert cleaned prose into a strict JSON script manifest for voice acting.
 Return only JSON. Do not use markdown. Preserve meaning. Narration must use NARRATOR.
@@ -42,7 +83,83 @@ def _build_script_text(manifest: ScriptManifest) -> str:
     return "\n".join(f"{segment.speaker}: {segment.text}" for segment in manifest.segments)
 
 
-def _split_dialogue(paragraph: str) -> list[tuple[str, str]]:
+def _extract_name_candidates(text: str) -> list[str]:
+    patterns = [LATIN_NAME_PATTERN, CJK_NAME_PATTERN]
+    candidates: list[str] = []
+    for pattern in patterns:
+        candidates.extend(re.findall(pattern, text))
+    normalized: list[str] = []
+    for name in candidates:
+        if re.fullmatch(CJK_NAME_PATTERN, name):
+            trimmed = name.strip(TRIMMABLE_CJK_EDGE_CHARS)
+            while len(trimmed) >= 2 and trimmed[-1] in TRIMMABLE_CJK_EDGE_CHARS:
+                trimmed = trimmed[:-1]
+            while len(trimmed) >= 2 and trimmed[0] in TRIMMABLE_CJK_EDGE_CHARS:
+                trimmed = trimmed[1:]
+            name = trimmed
+        if len(name) >= 2 and name not in STOPWORD_NAMES:
+            normalized.append(name)
+    return normalized
+
+
+def _infer_known_names(cleaned_text: str) -> set[str]:
+    counts: dict[str, int] = {}
+    for match in re.finditer(r'"([^"]+)"', cleaned_text):
+        window = cleaned_text[max(0, match.start() - 80) : min(len(cleaned_text), match.end() + 80)]
+        for name in _extract_name_candidates(window):
+            counts[name] = counts.get(name, 0) + 1
+
+    known_names: set[str] = set()
+    for name, count in counts.items():
+        full_count = cleaned_text.count(name)
+        if re.fullmatch(LATIN_NAME_PATTERN, name) and count >= 1 and full_count >= 2:
+            known_names.add(name)
+        elif re.fullmatch(CJK_NAME_PATTERN, name) and count >= 2 and full_count >= 2:
+            known_names.add(name)
+    return known_names
+
+
+def _pick_named_speaker(before: str, after: str, known_names: set[str]) -> str | None:
+    before_window = before[-60:]
+    after_window = after[:60]
+
+    known_name_pattern = "|".join(sorted((re.escape(name) for name in known_names), key=len, reverse=True))
+    if not known_name_pattern:
+        return None
+
+    explicit_patterns = [
+        rf"({known_name_pattern})[^\"\n]{{0,16}}(?:{'|'.join(SPEECH_VERBS)})",
+        rf"(?:{'|'.join(SPEECH_VERBS)})[^\"\n]{{0,16}}({known_name_pattern})",
+    ]
+    for window in (before_window, after_window):
+        for pattern in explicit_patterns:
+            matches = re.findall(pattern, window, flags=re.IGNORECASE)
+            for match in reversed(matches):
+                if match and match not in STOPWORD_NAMES:
+                    return match
+
+    before_names = [name for name in _extract_name_candidates(before_window) if name in known_names]
+    if before_names:
+        return before_names[-1]
+    after_names = [name for name in _extract_name_candidates(after_window) if name in known_names]
+    if after_names:
+        return after_names[0]
+    return None
+
+
+def _next_placeholder(state: dict[str, Any]) -> str:
+    placeholders = ["CHARACTER_A", "CHARACTER_B"]
+    index = state.get("placeholder_index", 0)
+    speaker = placeholders[index % len(placeholders)]
+    state["placeholder_index"] = index + 1
+    return speaker
+
+
+def _split_dialogue(
+    paragraph: str,
+    state: dict[str, Any],
+    known_names: set[str],
+) -> list[tuple[str, str]]:
     parts: list[tuple[str, str]] = []
     pattern = r'"([^"]+)"'
     matches = list(re.finditer(pattern, paragraph))
@@ -50,15 +167,18 @@ def _split_dialogue(paragraph: str) -> list[tuple[str, str]]:
         return [("NARRATOR", paragraph)]
 
     cursor = 0
-    speaker_index = 0
     for match in matches:
         before = paragraph[cursor:match.start()].strip(" ,")
+        after = paragraph[match.end() :].strip(" ,")
         if before:
             parts.append(("NARRATOR", before))
-        speaker = f"CHARACTER_{chr(ord('A') + min(speaker_index, 25))}"
+        speaker = _pick_named_speaker(before, after, known_names)
+        if not speaker:
+            previous = state.get("last_dialogue_speaker")
+            speaker = previous if previous and previous != "NARRATOR" else _next_placeholder(state)
         parts.append((speaker, match.group(1).strip()))
+        state["last_dialogue_speaker"] = speaker
         cursor = match.end()
-        speaker_index += 1
     after = paragraph[cursor:].strip(" ,")
     if after:
         parts.append(("NARRATOR", after))
@@ -73,9 +193,11 @@ def build_manifest_heuristic(
     paragraphs = [p.strip() for p in cleaned_text.split("\n\n") if p.strip()]
     segments: list[ScriptSegment] = []
     character_names: list[str] = ["NARRATOR"]
+    state: dict[str, Any] = {"placeholder_index": 0, "last_dialogue_speaker": None}
+    known_names = _infer_known_names(cleaned_text)
 
     for paragraph in paragraphs:
-        for speaker, text in _split_dialogue(paragraph):
+        for speaker, text in _split_dialogue(paragraph, state, known_names):
             if speaker not in character_names:
                 character_names.append(speaker)
             segments.append(
