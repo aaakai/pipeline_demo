@@ -1,0 +1,109 @@
+indoor_argument:
+  allowed_foreground_events:
+    - cup_hit
+    - cloth_rustle
+    - chair_move
+    - door_close_hard
+    - sigh
+    - breath_heavy
+  allowed_background_events:
+    - crowd_murmur
+  default_background_events: []
+  max_foreground_events: 5
+  max_total_events: 7
+  max_strong_events: 2
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    angry:
+      cup_hit: 1.0
+      chair_move: 0.8
+      breath_heavy: 0.7
+    sad:
+      sigh: 1.0
+      cloth_rustle: 0.7
+  event_density_level: medium
+
+office_talk:
+  allowed_foreground_events:
+    - cloth_rustle
+    - chair_move
+    - sigh
+  allowed_background_events:
+    - crowd_murmur
+  default_background_events: []
+  max_foreground_events: 3
+  max_total_events: 4
+  max_strong_events: 1
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      cloth_rustle: 0.6
+    tired:
+      sigh: 1.0
+  event_density_level: low
+
+rainy_street_chat:
+  allowed_foreground_events:
+    - cloth_rustle
+    - footsteps_fast
+    - sigh
+    - breath_heavy
+    - horn_short
+    - puddle_step
+  allowed_background_events:
+    - rain_light
+    - street_noise
+    - crowd_murmur
+    - car_passby_wet
+    - bus_arrive
+    - wind_light
+  default_background_events:
+    - rain_light
+    - street_noise
+    - crowd_murmur
+    - wind_light
+  max_foreground_events: 6
+  max_total_events: 12
+  max_strong_events: 2
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    angry:
+      footsteps_fast: 0.8
+      breath_heavy: 0.8
+      horn_short: 0.5
+      car_passby_wet: 0.4
+      puddle_step: 0.4
+    sad:
+      sigh: 1.0
+      rain_light: 0.8
+  event_density_level: medium
+
+cafe_chat:
+  allowed_foreground_events:
+    - cup_hit
+    - cloth_rustle
+    - chair_move
+    - sigh
+  allowed_background_events:
+    - crowd_murmur
+  default_background_events:
+    - crowd_murmur
+  max_foreground_events: 3
+  max_total_events: 5
+  max_strong_events: 1
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      crowd_murmur: 0.6
+      cloth_rustle: 0.5
+    angry:
+      cup_hit: 0.9
+  event_density_level: low

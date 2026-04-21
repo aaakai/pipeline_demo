@@ -1,0 +1,207 @@
+"""Dataclasses shared across the demo pipeline."""
+
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+from typing import Any, Literal
+
+EventPosition = Literal[
+    "before_anchor",
+    "after_anchor",
+    "around_anchor",
+    "sentence_start",
+    "sentence_end",
+]
+LayerType = Literal["foreground", "background"]
+
+
+@dataclass(frozen=True)
+class EventTaxonomyItem:
+    event_type: str
+    category: str
+    foreground: bool
+    can_overlap_speech: bool
+    default_duration_ms: int
+    gain_db_range: tuple[float, float]
+    mergeable: bool
+    tags: list[str]
+
+    @property
+    def layer(self) -> LayerType:
+        return "foreground" if self.foreground else "background"
+
+
+@dataclass
+class CandidateEvent:
+    event_type: str
+    anchor_text: str
+    position: EventPosition
+    strength: float
+    reason: str = ""
+    optional_duration_ms: int | None = None
+
+
+@dataclass
+class EnhancementResult:
+    plain_text: str
+    scene: str
+    emotion: str
+    candidate_events: list[CandidateEvent] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
+
+
+@dataclass
+class PlannedEvent:
+    event_id: str
+    event_type: str
+    anchor_text: str
+    position: EventPosition
+    strength: float
+    foreground: bool
+    optional_duration_ms: int | None = None
+    source: str = "planner"
+
+
+@dataclass
+class ScriptEvent:
+    type: str
+    anchor_text: str
+    position: EventPosition
+    strength: float
+
+
+@dataclass
+class EnhancedScript:
+    plain_text: str
+    script_text: str
+    scene: str
+    emotion: str
+    events: list[ScriptEvent] = field(default_factory=list)
+
+
+@dataclass
+class SfxAsset:
+    asset_id: str
+    path: str
+    event_type: str
+    duration_ms: int
+    tags: list[str]
+    intensity: float
+    sample_rate: int
+
+
+@dataclass
+class TimelineEvent:
+    event_id: str
+    event_type: str
+    anchor_text: str
+    position: EventPosition
+    foreground: bool
+    start_ms: int
+    end_ms: int
+    gain_db: float
+    ducking_db: float
+    asset_id: str | None
+    asset_path: str | None
+    skipped_reason: str | None = None
+    source_event_ids: list[str] = field(default_factory=list)
+
+
+@dataclass
+class CaseInput:
+    case_id: str
+    text: str
+    scene: str
+    emotion: str
+
+
+@dataclass
+class MixConfig:
+    speech_gain_db: float = 0.0
+    default_ducking_db: float = -4.0
+    fade_ms: int = 15
+    background_gain_db: float = -18.0
+
+
+@dataclass
+class MergeConfig:
+    enabled: bool = True
+    same_event_gap_ms: int = 350
+    cloth_rustle_merge_gap_ms: int = 700
+
+
+@dataclass
+class StyleConfig:
+    enable_keyword_style: bool = True
+    enable_brief_style: bool = True
+
+
+@dataclass
+class SceneTemplate:
+    name: str
+    allowed_foreground_events: list[str]
+    allowed_background_events: list[str]
+    default_background_events: list[str]
+    max_foreground_events: int
+    max_total_events: int
+    overlap_policy: dict[str, bool]
+    emotion_bias: dict[str, dict[str, float]]
+    event_density_level: str
+    max_strong_events: int = 2
+
+
+@dataclass
+class StyleViews:
+    keyword_style: str
+    brief_style: str
+    script_text: str
+
+
+@dataclass
+class OpenAITTSConfig:
+    api_key_env: str = "OPENAI_API_KEY"
+    base_url: str = "https://api.openai.com/v1"
+    model: str = "gpt-4o-mini-tts"
+    voice: str = "coral"
+    instructions: str | None = None
+    response_format: str = "wav"
+    speed: float = 1.0
+
+
+@dataclass
+class LLMEnhancerConfig:
+    api_key_env: str = "OPENAI_API_KEY"
+    base_url: str = "https://api.openai.com/v1"
+    model: str = "gpt-4o-mini"
+    temperature: float = 0.2
+    timeout_seconds: int = 60
+
+
+@dataclass
+class AppConfig:
+    input_mode: Literal["single", "batch"]
+    text: str
+    scene: str
+    emotion: str
+    allowed_events: list[str]
+    clean_voice_path: str | None
+    sfx_manifest_path: str
+    sample_rate: int
+    channels: int
+    output_dir: str
+    batch_input_path: str
+    scene_templates_path: str
+    enhancer: str
+    llm_enhancer: LLMEnhancerConfig
+    tts_provider: str
+    openai_tts: OpenAITTSConfig
+    mix: MixConfig
+    merge: MergeConfig
+    style: StyleConfig
+    random_seed: int | None = None
+
+
+def to_dict(value: Any) -> Any:
+    if hasattr(value, "__dataclass_fields__"):
+        return asdict(value)
+    return value

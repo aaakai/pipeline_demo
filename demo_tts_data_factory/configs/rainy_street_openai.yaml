@@ -1,0 +1,55 @@
+input_mode: single
+text: "雨夜的公交站挤着刚下班的人群，路边车流一阵接一阵地压过积水，远处偶尔传来短促的喇叭声。林夏把湿透的外套攥在手里，声音发抖却压得很低：你为什么又骗我？周屿往前逼近半步，鞋底踩过水洼，又立刻停住：我没有骗你，我只是没来得及说。林夏冷笑了一声，身后人群的低语像潮水一样漫过来：没来得及？你到底还想瞒我到什么时候？周屿沉重地吸了一口气，街口红灯亮起，车声忽然更近。"
+scene: rainy_street_chat
+emotion: angry
+allowed_events:
+  - cup_hit
+  - cloth_rustle
+  - chair_move
+  - door_close_hard
+  - footsteps_fast
+  - sigh
+  - breath_heavy
+  - rain_light
+  - street_noise
+  - crowd_murmur
+  - car_passby_wet
+  - horn_short
+  - bus_arrive
+  - puddle_step
+  - wind_light
+clean_voice_path:
+sfx_manifest_path: assets/sfx/manifest.json
+sample_rate: 24000
+channels: 1
+output_dir: output
+batch_input_path: examples/demo_inputs.jsonl
+scene_templates_path: configs/scene_templates.yaml
+enhancer: rule_based
+llm_enhancer:
+  api_key_env: OPENAI_API_KEY
+  base_url: https://api.openai.com/v1
+  model: gpt-4o-mini
+  temperature: 0.2
+tts_provider: openai
+openai_tts:
+  api_key_env: OPENAI_API_KEY
+  base_url: https://api.openai.com/v1
+  model: gpt-4o-mini-tts
+  voice: coral
+  instructions: "Speak naturally in Mandarin Chinese with tense, angry emotion, like an audio drama actor. Keep the pace close to a 30-second audio-drama scene."
+  response_format: wav
+  speed: 1.05
+mix:
+  speech_gain_db: 0.0
+  default_ducking_db: -4.0
+  fade_ms: 15
+  background_gain_db: -18.0
+merge:
+  enabled: true
+  same_event_gap_ms: 350
+  cloth_rustle_merge_gap_ms: 700
+style:
+  enable_keyword_style: true
+  enable_brief_style: true
+random_seed: 42
