@@ -10,11 +10,16 @@ import yaml
 
 from src.schemas import (
     AppConfig,
+    AssetScanConfig,
+    AssetSelectionConfig,
+    BackgroundSchedulerConfig,
     LLMEnhancerConfig,
+    LoudnessConfig,
     MergeConfig,
     MixConfig,
     OpenAITTSConfig,
     StyleConfig,
+    VariantsConfig,
 )
 
 
@@ -48,6 +53,11 @@ def load_config(config_path: str | Path) -> AppConfig:
     mix_data = data.get("mix") or {}
     merge_data = data.get("merge") or {}
     style_data = data.get("style") or {}
+    asset_scan_data = data.get("asset_scan") or {}
+    asset_selection_data = data.get("asset_selection") or {}
+    background_scheduler_data = data.get("background_scheduler") or {}
+    loudness_data = data.get("loudness") or {}
+    variants_data = data.get("variants") or {}
     llm_enhancer_data = data.get("llm_enhancer") or {}
     openai_tts_data = data.get("openai_tts") or {}
     return AppConfig(
@@ -95,6 +105,42 @@ def load_config(config_path: str | Path) -> AppConfig:
         style=StyleConfig(
             enable_keyword_style=bool(style_data.get("enable_keyword_style", True)),
             enable_brief_style=bool(style_data.get("enable_brief_style", True)),
+        ),
+        asset_scan=AssetScanConfig(
+            audio_extensions=list(
+                asset_scan_data.get("audio_extensions") or [".wav", ".mp3", ".flac"]
+            ),
+            auto_intensity=bool(asset_scan_data.get("auto_intensity", True)),
+            preserve_manual_overrides=bool(
+                asset_scan_data.get("preserve_manual_overrides", True)
+            ),
+        ),
+        asset_selection=AssetSelectionConfig(
+            strategy=asset_selection_data.get("strategy", "weighted_top_k"),
+            top_k=int(asset_selection_data.get("top_k", 3)),
+            avoid_recent=bool(asset_selection_data.get("avoid_recent", True)),
+            recent_window=int(asset_selection_data.get("recent_window", 6)),
+            scene_tag_weight=float(asset_selection_data.get("scene_tag_weight", 0.08)),
+        ),
+        background_scheduler=BackgroundSchedulerConfig(
+            enabled=bool(background_scheduler_data.get("enabled", True)),
+            max_background_layers=int(background_scheduler_data.get("max_background_layers", 4)),
+            max_accent_events=int(background_scheduler_data.get("max_accent_events", 5)),
+            min_gap_ms=int(background_scheduler_data.get("min_gap_ms", 3000)),
+            random_offset_ms=int(background_scheduler_data.get("random_offset_ms", 1200)),
+        ),
+        loudness=LoudnessConfig(
+            enabled=bool(loudness_data.get("enabled", True)),
+            target_speech_peak_dbfs=float(loudness_data.get("target_speech_peak_dbfs", -3.0)),
+            max_mix_peak_dbfs=float(loudness_data.get("max_mix_peak_dbfs", -1.0)),
+            background_headroom_db=float(loudness_data.get("background_headroom_db", 14.0)),
+            max_loudness_compensation_db=float(
+                loudness_data.get("max_loudness_compensation_db", 6.0)
+            ),
+        ),
+        variants=VariantsConfig(
+            enabled=bool(variants_data.get("enabled", False)),
+            names=list(variants_data.get("names") or ["balanced"]),
         ),
         random_seed=data.get("random_seed"),
     )

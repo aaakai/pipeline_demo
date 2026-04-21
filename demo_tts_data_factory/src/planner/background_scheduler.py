@@ -1,0 +1,143 @@
+"""Dynamic background and ambience event scheduling."""
+
+from __future__ import annotations
+
+import random
+
+from src.mix_profiles import get_variant_profile
+from src.schemas import BackgroundSchedulerConfig, SceneTemplate, TimelineEvent
+from src.sfx.taxonomy import TAXONOMY
+
+
+class BackgroundScheduler:
+    def __init__(self, config: BackgroundSchedulerConfig, rng: random.Random):
+        self.config = config
+        self.rng = rng
+
+    def schedule(
+        self,
+        timeline: list[TimelineEvent],
+        scene_template: SceneTemplate,
+        speech_duration_ms: int,
+        background_gain_db: float,
+        default_ducking_db: float,
+        variant: str | None,
+    ) -> list[TimelineEvent]:
+        if not self.config.enabled or speech_duration_ms <= 0:
+            return timeline
+
+        profile = get_variant_profile(variant)
+        scheduled = list(timeline)
+        existing_types = {event.event_type for event in scheduled}
+        accent_budget = int(self.config.max_accent_events * profile["accent_repeat_scale"])
+        accent_budget = max(0, accent_budget)
+
+        for event_type in self._accent_event_types(scene_template, existing_types):
+            if accent_budget <= 0:
+                break
+            repeats = min(accent_budget, self._repeat_count(event_type, profile))
+            for _ in range(repeats):
+                if accent_budget <= 0:
+                    break
+                event = self._make_event(
+                    event_type=event_type,
+                    timeline=scheduled,
+                    speech_duration_ms=speech_duration_ms,
+                    background_gain_db=background_gain_db,
+                    default_ducking_db=default_ducking_db,
+                    profile=profile,
+                )
+                if event is None:
+                    continue
+                scheduled.append(event)
+                accent_budget -= 1
+        return sorted(scheduled, key=lambda item: (item.start_ms, item.end_ms))
+
+    def _accent_event_types(
+        self,
+        scene_template: SceneTemplate,
+        existing_types: set[str],
+    ) -> list[str]:
+        preferred = [
+            "car_passby_wet",
+            "horn_short",
+            "puddle_step",
+            "bus_arrive",
+            "wind_light",
+        ]
+        allowed = set(scene_template.allowed_background_events) | set(scene_template.allowed_foreground_events)
+        return [event_type for event_type in preferred if event_type in allowed and event_type in TAXONOMY]
+
+    def _repeat_count(self, event_type: str, profile: dict[str, float]) -> int:
+        base = {
+            "car_passby_wet": 2,
+            "horn_short": 1,
+            "puddle_step": 1,
+            "bus_arrive": 1,
+            "wind_light": 1,
+        }.get(event_type, 1)
+        scaled = base * profile["accent_repeat_scale"]
+        return max(0, int(round(scaled)))
+
+    def _make_event(
+        self,
+        event_type: str,
+        timeline: list[TimelineEvent],
+        speech_duration_ms: int,
+        background_gain_db: float,
+        default_ducking_db: float,
+        profile: dict[str, float],
+    ) -> TimelineEvent | None:
+        taxonomy = TAXONOMY[event_type]
+        duration_ms = min(taxonomy.default_duration_ms, max(500, speech_duration_ms // 3))
+        latest_start = max(0, speech_duration_ms - duration_ms)
+        for _ in range(10):
+            start_ms = self.rng.randint(0, latest_start) if latest_start else 0
+            start_ms += self.rng.randint(-self.config.random_offset_ms, self.config.random_offset_ms)
+            start_ms = max(0, min(start_ms, latest_start))
+            end_ms = min(speech_duration_ms, start_ms + duration_ms)
+            if self._too_close(event_type, start_ms, timeline):
+                continue
+            strength = self._strength_for(event_type, profile)
+            gain_low, gain_high = taxonomy.gain_db_range
+            gain_db = gain_low + (gain_high - gain_low) * strength
+            if taxonomy.foreground:
+                gain_db += profile["foreground_gain_offset_db"]
+            else:
+                gain_db = min(gain_db + profile["background_gain_offset_db"], background_gain_db + 4.0)
+            ducking_db = default_ducking_db + profile["ducking_offset_db"] if taxonomy.foreground else 0.0
+            return TimelineEvent(
+                event_id=f"sched_{event_type}_{start_ms}",
+                event_type=event_type,
+                anchor_text=event_type,
+                position="around_anchor",
+                foreground=taxonomy.foreground,
+                start_ms=start_ms,
+                end_ms=end_ms,
+                gain_db=round(gain_db, 2),
+                ducking_db=round(ducking_db, 2),
+                asset_id=None,
+                asset_path=None,
+                source_event_ids=["background_scheduler"],
+            )
+        return None
+
+    def _too_close(self, event_type: str, start_ms: int, timeline: list[TimelineEvent]) -> bool:
+        for event in timeline:
+            if event.event_type != event_type:
+                continue
+            if abs(event.start_ms - start_ms) < self.config.min_gap_ms:
+                return True
+        return False
+
+    def _strength_for(self, event_type: str, profile: dict[str, float]) -> float:
+        base = {
+            "car_passby_wet": 0.58,
+            "horn_short": 0.48,
+            "puddle_step": 0.42,
+            "bus_arrive": 0.5,
+            "wind_light": 0.32,
+        }.get(event_type, 0.45)
+        if TAXONOMY[event_type].foreground:
+            return max(0.1, min(0.9, base * profile["foreground_density"]))
+        return max(0.1, min(0.9, base * profile["background_density"]))

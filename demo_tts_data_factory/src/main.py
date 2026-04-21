@@ -6,7 +6,9 @@ from pathlib import Path
 
 import typer
 
+from src.config import load_config
 from src.pipeline import run_from_config
+from src.sfx.manifest_builder import build_manifest
 
 app = typer.Typer(help="Generate demo TTS data with SFX timeline mixing.")
 
@@ -26,6 +28,22 @@ def run(
     for item in manifests:
         target = item.get("final_mix") or item["metadata"]
         typer.echo(f"- {item['case_id']}: {target}")
+
+
+@app.command("scan-assets")
+def scan_assets(
+    config: str = typer.Option("configs/demo.yaml", "--config", help="Path to YAML config."),
+) -> None:
+    config_path = Path(config).expanduser().resolve()
+    project_root = config_path.parents[1]
+    app_config = load_config(config_path)
+    manifest_path = (project_root / app_config.sfx_manifest_path).resolve()
+    records = build_manifest(
+        sfx_dir=manifest_path.parent,
+        manifest_path=manifest_path,
+        config=app_config.asset_scan,
+    )
+    typer.echo(f"Wrote {len(records)} asset record(s): {manifest_path}")
 
 
 @app.command(hidden=True)

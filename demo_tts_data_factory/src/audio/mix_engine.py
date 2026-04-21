@@ -12,10 +12,11 @@ from src.schemas import TimelineEvent
 
 
 class MixEngine:
-    def __init__(self, sample_rate: int, channels: int, fade_ms: int):
+    def __init__(self, sample_rate: int, channels: int, fade_ms: int, max_peak_dbfs: float = -1.0):
         self.sample_rate = sample_rate
         self.channels = channels
         self.fade_ms = fade_ms
+        self.max_peak_dbfs = max_peak_dbfs
 
     def mix(
         self,
@@ -46,7 +47,7 @@ class MixEngine:
             sfx = sfx.fade_in(fade).fade_out(fade)
             mixed = mixed.overlay(sfx, position=max(0, item.start_ms))
 
-        export_wav(normalize_peak(mixed), output_path)
+        export_wav(normalize_peak(mixed, self.max_peak_dbfs), output_path)
 
     def _apply_ducking(
         self,
