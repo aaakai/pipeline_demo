@@ -59,6 +59,16 @@ assets/sfx/manifest.json
 
 `path` 相对 `assets/sfx/manifest.json` 所在目录。没有匹配素材时不会中断，会记录到 `skipped_events`。
 
+### 自动扫描素材
+
+把素材放到 `assets/sfx/<event_type>/` 后，可以自动重建 manifest：
+
+```bash
+python -m src.main scan-assets --config configs/demo.yaml
+```
+
+扫描器会读取音频时长、采样率、声道数、RMS、峰值和静音比例，并估算 `intensity`。估算值只是初始值，适合快速造数；如果某条素材听感强弱和估算不一致，可以后续用 `assets/sfx/manifest_overrides.yaml` 做人工覆盖。
+
 ## 场景模板
 
 场景模板在：
@@ -83,6 +93,24 @@ configs/scene_templates.yaml
 ```bash
 python -m src.main run --config configs/demo.yaml
 ```
+
+如果配置里开启了：
+
+```yaml
+variants:
+  enabled: true
+  names: [subtle, balanced, cinematic]
+```
+
+同一条文本会生成三个版本：
+
+```text
+output/{case_id}_subtle/
+output/{case_id}_balanced/
+output/{case_id}_cinematic/
+```
+
+`subtle` 更干净，`balanced` 是默认推荐，`cinematic` 会使用更密的背景调度和更明显的动作音。
 
 输出：
 
@@ -127,7 +155,9 @@ python -m src.main run --config configs/batch_demo.yaml
 - `scene_template`
 - `original_events`
 - `merged_events`
+- `background_schedule`
 - `selected_assets`
+- `asset_selection_trace`
 - `skipped_events`
 - `event_timeline`
 - `mix_params`

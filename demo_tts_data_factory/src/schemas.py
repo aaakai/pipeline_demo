@@ -88,6 +88,8 @@ class SfxAsset:
     tags: list[str]
     intensity: float
     sample_rate: int
+    channels: int | None = None
+    analysis: dict[str, float] | None = None
 
 
 @dataclass
@@ -105,6 +107,9 @@ class TimelineEvent:
     asset_path: str | None
     skipped_reason: str | None = None
     source_event_ids: list[str] = field(default_factory=list)
+    selection_score: float | None = None
+    selection_reason: str | None = None
+    gain_trace: dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -134,6 +139,46 @@ class MergeConfig:
 class StyleConfig:
     enable_keyword_style: bool = True
     enable_brief_style: bool = True
+
+
+@dataclass
+class AssetScanConfig:
+    audio_extensions: list[str] = field(default_factory=lambda: [".wav", ".mp3", ".flac"])
+    auto_intensity: bool = True
+    preserve_manual_overrides: bool = True
+
+
+@dataclass
+class AssetSelectionConfig:
+    strategy: str = "weighted_top_k"
+    top_k: int = 3
+    avoid_recent: bool = True
+    recent_window: int = 6
+    scene_tag_weight: float = 0.08
+
+
+@dataclass
+class BackgroundSchedulerConfig:
+    enabled: bool = True
+    max_background_layers: int = 4
+    max_accent_events: int = 5
+    min_gap_ms: int = 3000
+    random_offset_ms: int = 1200
+
+
+@dataclass
+class LoudnessConfig:
+    enabled: bool = True
+    target_speech_peak_dbfs: float = -3.0
+    max_mix_peak_dbfs: float = -1.0
+    background_headroom_db: float = 14.0
+    max_loudness_compensation_db: float = 6.0
+
+
+@dataclass
+class VariantsConfig:
+    enabled: bool = False
+    names: list[str] = field(default_factory=lambda: ["balanced"])
 
 
 @dataclass
@@ -198,6 +243,11 @@ class AppConfig:
     mix: MixConfig
     merge: MergeConfig
     style: StyleConfig
+    asset_scan: AssetScanConfig
+    asset_selection: AssetSelectionConfig
+    background_scheduler: BackgroundSchedulerConfig
+    loudness: LoudnessConfig
+    variants: VariantsConfig
     random_seed: int | None = None
 
 
