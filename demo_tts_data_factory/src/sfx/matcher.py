@@ -44,7 +44,8 @@ class SfxMatcher:
         top_k = max(1, min(self.config.top_k, len(scored)))
         top = scored[:top_k]
         if self.config.strategy == "weighted_top_k" and len(top) > 1:
-            weights = [1.0 / (item_score + 0.05) for item_score, _ in top]
+            min_score = min(item_score for item_score, _ in top)
+            weights = [1.0 / (item_score - min_score + 0.05) for item_score, _ in top]
             chosen_score, chosen = self.rng.choices(top, weights=weights, k=1)[0]
         else:
             chosen_score, chosen = top[0]
