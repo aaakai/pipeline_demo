@@ -12,7 +12,7 @@ from src.schemas import DialoguePlannerConfig
 from src.sfx.taxonomy import TAXONOMY
 
 
-SCENE_CHOICES = ["rainy_street_chat", "indoor_argument", "office_talk", "cafe_chat"]
+SCENE_CHOICES = ["rainy_street_chat", "sunny_street_chat", "indoor_room_chat", "restaurant_chat", "indoor_argument", "office_talk", "cafe_chat"]
 EMOTION_CHOICES = ["angry", "tense", "sad", "neutral", "tired"]
 
 
@@ -80,9 +80,14 @@ def _build_prompt(
                 "Choose primary emotion from emotion_choices.",
                 "Event event_type must be one of allowed_events.",
                 "For rainy_street_chat, prefer a layered ambience bed: rain_light plus street_noise and wind_light when appropriate.",
+                "For sunny_street_chat, prefer a dry daytime street bed: street_noise, crowd_murmur, bird_chirp, wind_light, and dry vehicle accents when appropriate.",
+                "For indoor_room_chat, prefer a quiet interior bed: room_tone and air_conditioner_hum, with sparse close details such as cloth_rustle, chair_move, paper_rustle, phone_vibrate, door_knock, keyboard_typing, and light_switch_click.",
+                "For restaurant_chat, prefer a social dining bed: restaurant_murmur and kitchen_clatter, with table details such as cutlery_clink, plate_set_down, glass_clink, pour_water, menu_page_turn, and service_bell.",
                 "For long clips, plan enough sparse accents to keep the world alive: roughly 1 event every 12-20 seconds.",
                 "Place strong foreground events in detected pauses or low-energy regions whenever possible.",
                 "Use vehicle and street accents such as car_passby_wet, bus_arrive, horn_short, and puddle_step for outdoor street scenes.",
+                "Use daytime street accents such as car_passby_dry, bicycle_bell, crosswalk_beep, shop_door_chime, and distant_construction for sunny_street_chat.",
+                "For indoor scenes, avoid outdoor ambience and use quieter, shorter foreground accents so the room feels close without covering speech.",
                 "Dialogue clarity is still important: avoid placing loud foreground effects over dense speech.",
                 "Return JSON with keys: scene, emotion, summary, speakers, script_notes, events.",
             ],

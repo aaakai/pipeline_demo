@@ -66,10 +66,10 @@ class DialogueMixPipeline:
         )
         self.logger.info("Dialogue LLM plan: %s", plan)
 
-        scene = self._safe_scene(plan.get("scene"))
+        scene = self._resolve_scene(plan.get("scene"))
         emotion = str(plan.get("emotion") or "tense")
         scene_template = self.template_store.get(scene)
-        base_timeline = self._timeline_from_plan(plan, duration_ms)
+        base_timeline = self._timeline_from_plan(plan, duration_ms, scene_template)
         base_case_id = self._case_id(source_audio)
         manifests: list[dict] = []
 
@@ -200,11 +200,15 @@ class DialogueMixPipeline:
             raise FileNotFoundError(f"No dialogue audio found in: {input_dir}")
         return max(candidates, key=lambda path: path.stat().st_mtime)
 
-    def _timeline_from_plan(self, plan: dict, duration_ms: int) -> list[TimelineEvent]:
+    def _timeline_from_plan(self, plan: dict, duration_ms: int, scene_template) -> list[TimelineEvent]:
         timeline: list[TimelineEvent] = []
+        template_allowed = set(scene_template.allowed_foreground_events) | set(scene_template.allowed_background_events)
+        global_allowed = set(self.config.allowed_events)
         for index, event in enumerate(plan.get("events") or [], start=1):
             event_type = event.get("event_type")
             if event_type not in TAXONOMY:
+                continue
+            if event_type not in template_allowed or event_type not in global_allowed:
                 continue
             taxonomy = TAXONOMY[event_type]
             start_ms = int(max(0, min(duration_ms - 1, int(event.get("start_ms", 0) or 0))))
@@ -302,13 +306,17 @@ class DialogueMixPipeline:
     def _scene_tags(self, scene: str, emotion: str) -> set[str]:
         tags = {scene, emotion}
         if "street" in scene:
-            tags.update({"street", "outdoor", "traffic", "wet"})
+            tags.update({"street", "outdoor", "traffic"})
         if "rain" in scene:
             tags.update({"rain", "weather", "wet"})
+        if "sunny" in scene:
+            tags.update({"sunny", "daytime", "dry"})
         if "cafe" in scene:
             tags.update({"crowd", "indoor"})
+        if "restaurant" in scene:
+            tags.update({"restaurant", "crowd", "indoor", "table", "kitchen"})
         if "indoor" in scene or "office" in scene:
-            tags.update({"indoor"})
+            tags.update({"indoor", "room"})
         return tags
 
     def _script_text(
@@ -345,6 +353,12 @@ class DialogueMixPipeline:
         if not self.config.variants.enabled:
             return [None]
         return [name for name in self.config.variants.names if name]
+
+    def _resolve_scene(self, planned_scene: object) -> str:
+        scene_mode = self.config.dialogue_audio.scene_mode
+        if scene_mode in {"config", "fixed", "manual"}:
+            return self._safe_scene(self.config.scene)
+        return self._safe_scene(planned_scene)
 
     def _safe_scene(self, scene: object) -> str:
         try:

@@ -1,22 +1,45 @@
 input_mode: single
 text: ""
-scene: rainy_street_chat
+scene: restaurant_chat
 emotion: tense
 allowed_events:
   - cup_hit
   - cloth_rustle
   - chair_move
   - door_close_hard
+  - door_knock
   - footsteps_fast
+  - footsteps_indoor
   - sigh
   - breath_heavy
+  - room_tone
+  - air_conditioner_hum
+  - fluorescent_light_hum
+  - paper_rustle
+  - menu_page_turn
+  - keyboard_typing
+  - phone_vibrate
+  - light_switch_click
+  - restaurant_murmur
+  - cutlery_clink
+  - plate_set_down
+  - glass_clink
+  - pour_water
+  - kitchen_clatter
+  - service_bell
   - rain_light
   - street_noise
   - crowd_murmur
   - car_passby_wet
+  - car_passby_dry
   - horn_short
   - bus_arrive
   - puddle_step
+  - bicycle_bell
+  - bird_chirp
+  - crosswalk_beep
+  - shop_door_chime
+  - distant_construction
   - wind_light
 clean_voice_path:
 sfx_manifest_path: assets/sfx/manifest.json
@@ -31,7 +54,7 @@ dialogue_audio:
   input_dir: input
   audio_path:
   allowed_audio_extensions: [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
-  scene_mode: auto
+  scene_mode: config
   emotion_mode: auto
   anchor_method: asr_segments_plus_pause
   asr:

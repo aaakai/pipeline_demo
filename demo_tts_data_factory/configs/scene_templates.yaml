@@ -46,6 +46,105 @@ office_talk:
       sigh: 1.0
   event_density_level: low
 
+indoor_room_chat:
+  allowed_foreground_events:
+    - cloth_rustle
+    - chair_move
+    - cup_hit
+    - door_knock
+    - door_close_hard
+    - footsteps_indoor
+    - paper_rustle
+    - keyboard_typing
+    - phone_vibrate
+    - light_switch_click
+    - sigh
+    - breath_heavy
+  allowed_background_events:
+    - room_tone
+    - air_conditioner_hum
+    - fluorescent_light_hum
+    - crowd_murmur
+  default_background_events:
+    - room_tone
+    - air_conditioner_hum
+  max_foreground_events: 6
+  max_total_events: 12
+  max_strong_events: 2
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      room_tone: 0.4
+      paper_rustle: 0.3
+      cloth_rustle: 0.3
+    tense:
+      phone_vibrate: 0.6
+      door_knock: 0.5
+      breath_heavy: 0.4
+    angry:
+      door_close_hard: 0.8
+      chair_move: 0.6
+      cup_hit: 0.5
+    tired:
+      air_conditioner_hum: 0.5
+      sigh: 0.6
+    sad:
+      room_tone: 0.5
+      sigh: 0.7
+      cloth_rustle: 0.4
+  event_density_level: medium
+
+restaurant_chat:
+  allowed_foreground_events:
+    - cloth_rustle
+    - chair_move
+    - cup_hit
+    - cutlery_clink
+    - plate_set_down
+    - glass_clink
+    - pour_water
+    - menu_page_turn
+    - service_bell
+    - phone_vibrate
+    - sigh
+  allowed_background_events:
+    - restaurant_murmur
+    - kitchen_clatter
+    - air_conditioner_hum
+    - room_tone
+  default_background_events:
+    - restaurant_murmur
+    - kitchen_clatter
+  max_foreground_events: 6
+  max_total_events: 12
+  max_strong_events: 2
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      restaurant_murmur: 0.5
+      cutlery_clink: 0.4
+      menu_page_turn: 0.3
+    tense:
+      glass_clink: 0.5
+      phone_vibrate: 0.4
+      kitchen_clatter: 0.3
+    angry:
+      plate_set_down: 0.7
+      cup_hit: 0.6
+      chair_move: 0.5
+    tired:
+      air_conditioner_hum: 0.4
+      sigh: 0.5
+    sad:
+      restaurant_murmur: 0.4
+      glass_clink: 0.4
+      sigh: 0.6
+  event_density_level: medium
+
 rainy_street_chat:
   allowed_foreground_events:
     - cloth_rustle
@@ -82,6 +181,49 @@ rainy_street_chat:
     sad:
       sigh: 1.0
       rain_light: 0.8
+  event_density_level: medium
+
+sunny_street_chat:
+  allowed_foreground_events:
+    - cloth_rustle
+    - bicycle_bell
+    - horn_short
+    - shop_door_chime
+    - sigh
+  allowed_background_events:
+    - street_noise
+    - crowd_murmur
+    - car_passby_dry
+    - bus_arrive
+    - bird_chirp
+    - crosswalk_beep
+    - distant_construction
+    - wind_light
+  default_background_events:
+    - street_noise
+    - crowd_murmur
+    - bird_chirp
+    - wind_light
+  max_foreground_events: 5
+  max_total_events: 12
+  max_strong_events: 2
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      bird_chirp: 0.5
+      crowd_murmur: 0.4
+    tense:
+      horn_short: 0.5
+      car_passby_dry: 0.4
+      crosswalk_beep: 0.3
+    angry:
+      horn_short: 0.6
+      bicycle_bell: 0.3
+    tired:
+      distant_construction: 0.4
+      sigh: 0.5
   event_density_level: medium
 
 cafe_chat:
