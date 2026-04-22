@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import random
 import shutil
+import hashlib
 from dataclasses import replace
 from pathlib import Path
 
@@ -291,7 +292,8 @@ class DemoPipeline:
 
     def _prepare_shared_clean_speech(self, case: CaseInput) -> Path:
         shared_dir = ensure_dir(self.project_root / self.config.output_dir / "_shared_clean_speech")
-        clean_path = shared_dir / f"{case.case_id}.wav"
+        digest = hashlib.sha1("".join(case.text.split()).encode("utf-8")).hexdigest()[:10]
+        clean_path = shared_dir / f"{digest}.wav"
         if clean_path.exists():
             return clean_path
         self.logger.info("Synthesizing shared clean speech for variants: %s", clean_path)

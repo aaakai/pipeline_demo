@@ -223,6 +223,38 @@ class LLMEnhancerConfig:
 
 
 @dataclass
+class OpenAIASRConfig:
+    api_key_env: str = "OPENAI_API_KEY"
+    base_url: str = "https://api.openai.com/v1"
+    model: str = "whisper-1"
+    language: str | None = "zh"
+    timeout_seconds: int = 180
+
+
+@dataclass
+class DialoguePlannerConfig:
+    api_key_env: str = "OPENAI_API_KEY"
+    base_url: str = "https://api.openai.com/v1"
+    model: str = "gpt-4o-mini"
+    temperature: float = 0.2
+    timeout_seconds: int = 90
+
+
+@dataclass
+class DialogueAudioConfig:
+    input_dir: str = "input"
+    audio_path: str | None = None
+    allowed_audio_extensions: list[str] = field(
+        default_factory=lambda: [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
+    )
+    scene_mode: str = "auto"
+    emotion_mode: str = "auto"
+    anchor_method: str = "asr_segments_plus_pause"
+    asr: OpenAIASRConfig = field(default_factory=OpenAIASRConfig)
+    planner: DialoguePlannerConfig = field(default_factory=DialoguePlannerConfig)
+
+
+@dataclass
 class AppConfig:
     input_mode: Literal["single", "batch"]
     text: str
@@ -240,6 +272,7 @@ class AppConfig:
     llm_enhancer: LLMEnhancerConfig
     tts_provider: str
     openai_tts: OpenAITTSConfig
+    dialogue_audio: DialogueAudioConfig
     mix: MixConfig
     merge: MergeConfig
     style: StyleConfig

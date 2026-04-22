@@ -28,6 +28,15 @@ class BackgroundScheduler:
 
         profile = get_variant_profile(variant)
         scheduled = list(timeline)
+        scheduled.extend(
+            self._background_beds(
+                timeline=scheduled,
+                scene_template=scene_template,
+                speech_duration_ms=speech_duration_ms,
+                background_gain_db=background_gain_db,
+                profile=profile,
+            )
+        )
         existing_types = {event.event_type for event in scheduled}
         accent_budget = int(self.config.max_accent_events * profile["accent_repeat_scale"])
         accent_budget = max(0, accent_budget)
@@ -53,6 +62,55 @@ class BackgroundScheduler:
                 accent_budget -= 1
         return sorted(scheduled, key=lambda item: (item.start_ms, item.end_ms))
 
+    def _background_beds(
+        self,
+        timeline: list[TimelineEvent],
+        scene_template: SceneTemplate,
+        speech_duration_ms: int,
+        background_gain_db: float,
+        profile: dict[str, float],
+    ) -> list[TimelineEvent]:
+        """Add long ambience layers so the scene has a continuous acoustic floor."""
+        existing_background = {
+            event.event_type
+            for event in timeline
+            if not event.foreground and event.end_ms - event.start_ms >= speech_duration_ms * 0.6
+        }
+        current_layers = len(existing_background)
+        beds: list[TimelineEvent] = []
+        for event_type in scene_template.default_background_events:
+            if current_layers >= self.config.max_background_layers:
+                break
+            if event_type in existing_background or event_type not in TAXONOMY:
+                continue
+            taxonomy = TAXONOMY[event_type]
+            if taxonomy.foreground:
+                continue
+            strength = self._background_bed_strength(event_type, profile)
+            gain_low, gain_high = taxonomy.gain_db_range
+            gain_db = gain_low + (gain_high - gain_low) * strength
+            gain_db = min(gain_db + profile["background_gain_offset_db"], background_gain_db + 6.0)
+            beds.append(
+                TimelineEvent(
+                    event_id=f"bed_{event_type}",
+                    event_type=event_type,
+                    anchor_text=event_type,
+                    position="around_anchor",
+                    foreground=False,
+                    start_ms=0,
+                    end_ms=speech_duration_ms,
+                    gain_db=round(gain_db, 2),
+                    ducking_db=0.0,
+                    asset_id=None,
+                    asset_path=None,
+                    source_event_ids=["background_bed"],
+                    gain_trace={"background_bed_strength": round(strength, 3)},
+                )
+            )
+            existing_background.add(event_type)
+            current_layers += 1
+        return beds
+
     def _accent_event_types(
         self,
         scene_template: SceneTemplate,
@@ -60,21 +118,23 @@ class BackgroundScheduler:
     ) -> list[str]:
         preferred = [
             "car_passby_wet",
+            "bus_arrive",
             "horn_short",
             "puddle_step",
-            "bus_arrive",
             "wind_light",
+            "street_noise",
         ]
         allowed = set(scene_template.allowed_background_events) | set(scene_template.allowed_foreground_events)
         return [event_type for event_type in preferred if event_type in allowed and event_type in TAXONOMY]
 
     def _repeat_count(self, event_type: str, profile: dict[str, float]) -> int:
         base = {
-            "car_passby_wet": 2,
-            "horn_short": 1,
-            "puddle_step": 1,
-            "bus_arrive": 1,
+            "car_passby_wet": 3,
+            "bus_arrive": 2,
+            "horn_short": 2,
+            "puddle_step": 3,
             "wind_light": 1,
+            "street_noise": 1,
         }.get(event_type, 1)
         scaled = base * profile["accent_repeat_scale"]
         return max(0, int(round(scaled)))
@@ -137,7 +197,17 @@ class BackgroundScheduler:
             "puddle_step": 0.42,
             "bus_arrive": 0.5,
             "wind_light": 0.32,
+            "street_noise": 0.38,
         }.get(event_type, 0.45)
         if TAXONOMY[event_type].foreground:
             return max(0.1, min(0.9, base * profile["foreground_density"]))
         return max(0.1, min(0.9, base * profile["background_density"]))
+
+    def _background_bed_strength(self, event_type: str, profile: dict[str, float]) -> float:
+        base = {
+            "rain_light": 0.5,
+            "street_noise": 0.46,
+            "wind_light": 0.34,
+            "crowd_murmur": 0.28,
+        }.get(event_type, 0.36)
+        return max(0.12, min(0.85, base * profile["background_density"]))

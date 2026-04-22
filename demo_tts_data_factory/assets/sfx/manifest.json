@@ -20,6 +20,90 @@
     }
   },
   {
+    "asset_id": "breath_heavy_002",
+    "path": "breath_heavy/breath_heavy_002.mp3",
+    "event_type": "breath_heavy",
+    "duration_ms": 17659,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 44100,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -41.62,
+      "peak_dbfs": -18.59,
+      "silence_ratio": 0.4011,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "breath_heavy_003",
+    "path": "breath_heavy/breath_heavy_003.mp3",
+    "event_type": "breath_heavy",
+    "duration_ms": 12648,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.4666,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -28.26,
+      "peak_dbfs": -8.19,
+      "silence_ratio": 0.0945,
+      "estimated_intensity": 0.4666
+    }
+  },
+  {
+    "asset_id": "bus_arrive_001",
+    "path": "bus_arrive/bus_arrive_001.mp3",
+    "event_type": "bus_arrive",
+    "duration_ms": 6960,
+    "tags": [
+      "street",
+      "bus",
+      "brake",
+      "vehicle",
+      "background"
+    ],
+    "intensity": 0.8548,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -15.26,
+      "peak_dbfs": -0.73,
+      "silence_ratio": 0.0857,
+      "estimated_intensity": 0.8548
+    }
+  },
+  {
+    "asset_id": "bus_arrive_002",
+    "path": "bus_arrive/bus_arrive_002.mp3",
+    "event_type": "bus_arrive",
+    "duration_ms": 26149,
+    "tags": [
+      "street",
+      "bus",
+      "brake",
+      "vehicle",
+      "background"
+    ],
+    "intensity": 0.4899,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -25.3,
+      "peak_dbfs": -9.56,
+      "silence_ratio": 0.1221,
+      "estimated_intensity": 0.4899
+    }
+  },
+  {
     "asset_id": "car_passby_wet_001",
     "path": "car_passby_wet/car_passby_wet_001.mp3",
     "event_type": "car_passby_wet",
@@ -38,6 +122,50 @@
       "peak_dbfs": -11.89,
       "silence_ratio": 0.0,
       "estimated_intensity": 0.3448
+    }
+  },
+  {
+    "asset_id": "car_passby_wet_002",
+    "path": "car_passby_wet/car_passby_wet_002.mp3",
+    "event_type": "car_passby_wet",
+    "duration_ms": 5808,
+    "tags": [
+      "street",
+      "traffic",
+      "wet",
+      "vehicle",
+      "background"
+    ],
+    "intensity": 0.7741,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -20.43,
+      "peak_dbfs": -1.22,
+      "silence_ratio": 0.1186,
+      "estimated_intensity": 0.7741
+    }
+  },
+  {
+    "asset_id": "car_passby_wet_003",
+    "path": "car_passby_wet/car_passby_wet_003.mp3",
+    "event_type": "car_passby_wet",
+    "duration_ms": 12024,
+    "tags": [
+      "street",
+      "traffic",
+      "wet",
+      "vehicle",
+      "background"
+    ],
+    "intensity": 0.8429,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -17.5,
+      "peak_dbfs": -0.28,
+      "silence_ratio": 0.1322,
+      "estimated_intensity": 0.8429
     }
   },
   {
@@ -61,6 +189,48 @@
     }
   },
   {
+    "asset_id": "chair_move_mock_002",
+    "path": "chair_move/chair_move_mock_002.mp3",
+    "event_type": "chair_move",
+    "duration_ms": 6609,
+    "tags": [
+      "chair",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.221,
+    "sample_rate": 44100,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -30.03,
+      "peak_dbfs": -11.94,
+      "silence_ratio": 0.5075,
+      "estimated_intensity": 0.221
+    }
+  },
+  {
+    "asset_id": "chair_move_mock_003",
+    "path": "chair_move/chair_move_mock_003.mp3",
+    "event_type": "chair_move",
+    "duration_ms": 3864,
+    "tags": [
+      "chair",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.4562,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -31.91,
+      "peak_dbfs": -4.13,
+      "silence_ratio": 0.1282,
+      "estimated_intensity": 0.4562
+    }
+  },
+  {
     "asset_id": "cloth_rustle_001",
     "path": "cloth_rustle/cloth_rustle_001.mp3",
     "event_type": "cloth_rustle",
@@ -78,6 +248,48 @@
       "peak_dbfs": -1.23,
       "silence_ratio": 0.6522,
       "estimated_intensity": 0.3812
+    }
+  },
+  {
+    "asset_id": "cloth_rustle_002",
+    "path": "cloth_rustle/cloth_rustle_002.mp3",
+    "event_type": "cloth_rustle",
+    "duration_ms": 30504,
+    "tags": [
+      "cloth",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.4154,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -36.16,
+      "peak_dbfs": -3.91,
+      "silence_ratio": 0.0196,
+      "estimated_intensity": 0.4154
+    }
+  },
+  {
+    "asset_id": "cloth_rustle_003",
+    "path": "cloth_rustle/cloth_rustle_003.mp3",
+    "event_type": "cloth_rustle",
+    "duration_ms": 30504,
+    "tags": [
+      "cloth",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.4154,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -36.16,
+      "peak_dbfs": -3.91,
+      "silence_ratio": 0.0196,
+      "estimated_intensity": 0.4154
     }
   },
   {
@@ -101,23 +313,127 @@
     }
   },
   {
-    "asset_id": "cup_hit_mock_001",
-    "path": "cup_hit/cup_hit_mock_001.wav",
-    "event_type": "cup_hit",
-    "duration_ms": 350,
+    "asset_id": "crowd_murmur_002",
+    "path": "crowd_murmur/crowd_murmur_002.mp3",
+    "event_type": "crowd_murmur",
+    "duration_ms": 10944,
     "tags": [
-      "indoor",
-      "impact",
-      "foreground"
+      "crowd",
+      "ambience",
+      "background"
     ],
-    "intensity": 0.6346,
+    "intensity": 0.7091,
     "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -19.97,
+      "peak_dbfs": -0.97,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.7091
+    }
+  },
+  {
+    "asset_id": "crowd_murmur_003",
+    "path": "crowd_murmur/crowd_murmur_003.mp3",
+    "event_type": "crowd_murmur",
+    "duration_ms": 22104,
+    "tags": [
+      "crowd",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.6814,
+    "sample_rate": 48000,
     "channels": 1,
     "analysis": {
-      "rms_dbfs": -22.48,
-      "peak_dbfs": -7.2,
-      "silence_ratio": 0.5,
-      "estimated_intensity": 0.6346
+      "rms_dbfs": -20.69,
+      "peak_dbfs": -1.64,
+      "silence_ratio": 0.0045,
+      "estimated_intensity": 0.6814
+    }
+  },
+  {
+    "asset_id": "cup_hit_002",
+    "path": "cup_hit/cup_hit_002.mp3",
+    "event_type": "cup_hit",
+    "duration_ms": 1176,
+    "tags": [
+      "impact",
+      "indoor",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.3937,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -35.15,
+      "peak_dbfs": -2.68,
+      "silence_ratio": 0.9167,
+      "estimated_intensity": 0.3937
+    }
+  },
+  {
+    "asset_id": "cup_hit_003",
+    "path": "cup_hit/cup_hit_003.mp3",
+    "event_type": "cup_hit",
+    "duration_ms": 10057,
+    "tags": [
+      "impact",
+      "indoor",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.6726,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -24.68,
+      "peak_dbfs": -0.02,
+      "silence_ratio": 0.6337,
+      "estimated_intensity": 0.6726
+    }
+  },
+  {
+    "asset_id": "door_close_hard_001",
+    "path": "door_close_hard/door_close_hard_001.mp3",
+    "event_type": "door_close_hard",
+    "duration_ms": 3030,
+    "tags": [
+      "impact",
+      "indoor",
+      "door",
+      "foreground"
+    ],
+    "intensity": 0.8572,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -16.15,
+      "peak_dbfs": -0.0,
+      "silence_ratio": 0.5806,
+      "estimated_intensity": 0.8572
+    }
+  },
+  {
+    "asset_id": "door_close_hard_002",
+    "path": "door_close_hard/door_close_hard_002.mp3",
+    "event_type": "door_close_hard",
+    "duration_ms": 3312,
+    "tags": [
+      "impact",
+      "indoor",
+      "door",
+      "foreground"
+    ],
+    "intensity": 0.4964,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -33.56,
+      "peak_dbfs": -5.18,
+      "silence_ratio": 0.3824,
+      "estimated_intensity": 0.4964
     }
   },
   {
@@ -142,6 +458,26 @@
     }
   },
   {
+    "asset_id": "footsteps_fast_002",
+    "path": "footsteps_fast/footsteps_fast_002.mp3",
+    "event_type": "footsteps_fast",
+    "duration_ms": 7079,
+    "tags": [
+      "movement",
+      "footsteps",
+      "foreground"
+    ],
+    "intensity": 0.6034,
+    "sample_rate": 44100,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -30.53,
+      "peak_dbfs": -0.75,
+      "silence_ratio": 0.1268,
+      "estimated_intensity": 0.6034
+    }
+  },
+  {
     "asset_id": "horn_short_001",
     "path": "horn_short/horn_short_001.mp3",
     "event_type": "horn_short",
@@ -149,6 +485,50 @@
     "tags": [
       "traffic",
       "horn",
+      "foreground"
+    ],
+    "intensity": 0.6318,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -21.66,
+      "peak_dbfs": -5.49,
+      "silence_ratio": 0.5833,
+      "estimated_intensity": 0.6318
+    }
+  },
+  {
+    "asset_id": "horn_short_002",
+    "path": "horn_short/horn_short_002.mp3",
+    "event_type": "horn_short",
+    "duration_ms": 1248,
+    "tags": [
+      "street",
+      "traffic",
+      "horn",
+      "vehicle",
+      "foreground"
+    ],
+    "intensity": 0.6199,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -22.15,
+      "peak_dbfs": -9.52,
+      "silence_ratio": 0.3846,
+      "estimated_intensity": 0.6199
+    }
+  },
+  {
+    "asset_id": "horn_short_003",
+    "path": "horn_short/horn_short_003.mp3",
+    "event_type": "horn_short",
+    "duration_ms": 1200,
+    "tags": [
+      "street",
+      "traffic",
+      "horn",
+      "vehicle",
       "foreground"
     ],
     "intensity": 0.6318,
@@ -183,6 +563,50 @@
     }
   },
   {
+    "asset_id": "puddle_step_002",
+    "path": "puddle_step/puddle_step_002.mp3",
+    "event_type": "puddle_step",
+    "duration_ms": 3816,
+    "tags": [
+      "street",
+      "water",
+      "footsteps",
+      "footsteps",
+      "foreground"
+    ],
+    "intensity": 0.4035,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -36.61,
+      "peak_dbfs": -8.47,
+      "silence_ratio": 0.0256,
+      "estimated_intensity": 0.4035
+    }
+  },
+  {
+    "asset_id": "puddle_step_003",
+    "path": "puddle_step/puddle_step_003.mp3",
+    "event_type": "puddle_step",
+    "duration_ms": 3816,
+    "tags": [
+      "street",
+      "water",
+      "footsteps",
+      "footsteps",
+      "foreground"
+    ],
+    "intensity": 0.4035,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -36.61,
+      "peak_dbfs": -8.47,
+      "silence_ratio": 0.0256,
+      "estimated_intensity": 0.4035
+    }
+  },
+  {
     "asset_id": "rain_light_001",
     "path": "rain_light/rain_light_001.mp3",
     "event_type": "rain_light",
@@ -203,6 +627,48 @@
     }
   },
   {
+    "asset_id": "rain_light_002",
+    "path": "rain_light/rain_light_002.mp3",
+    "event_type": "rain_light",
+    "duration_ms": 15168,
+    "tags": [
+      "rain",
+      "outdoor",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -49.72,
+      "peak_dbfs": -20.12,
+      "silence_ratio": 0.0066,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "rain_light_003",
+    "path": "rain_light/rain_light_003.mp3",
+    "event_type": "rain_light",
+    "duration_ms": 30048,
+    "tags": [
+      "rain",
+      "outdoor",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -64.29,
+      "peak_dbfs": -41.43,
+      "silence_ratio": 1.0,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
     "asset_id": "sigh_001",
     "path": "sigh/sigh_001.mp3",
     "event_type": "sigh",
@@ -220,6 +686,46 @@
       "peak_dbfs": -9.45,
       "silence_ratio": 0.0,
       "estimated_intensity": 0.5164
+    }
+  },
+  {
+    "asset_id": "sigh_002",
+    "path": "sigh/sigh_002.mp3",
+    "event_type": "sigh",
+    "duration_ms": 3912,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.6517,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -26.26,
+      "peak_dbfs": -1.32,
+      "silence_ratio": 0.025,
+      "estimated_intensity": 0.6517
+    }
+  },
+  {
+    "asset_id": "sigh_003",
+    "path": "sigh/sigh_003.mp3",
+    "event_type": "sigh",
+    "duration_ms": 13416,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.2377,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -30.04,
+      "peak_dbfs": -11.35,
+      "silence_ratio": 0.4889,
+      "estimated_intensity": 0.2377
     }
   },
   {
@@ -244,6 +750,50 @@
     }
   },
   {
+    "asset_id": "street_noise_002",
+    "path": "street_noise/street_noise_002.mp3",
+    "event_type": "street_noise",
+    "duration_ms": 20544,
+    "tags": [
+      "street",
+      "outdoor",
+      "traffic",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.5235,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -24.3,
+      "peak_dbfs": -7.8,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.5235
+    }
+  },
+  {
+    "asset_id": "street_noise_003",
+    "path": "street_noise/street_noise_003.mp3",
+    "event_type": "street_noise",
+    "duration_ms": 18840,
+    "tags": [
+      "street",
+      "outdoor",
+      "traffic",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -39.73,
+      "peak_dbfs": -26.91,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
     "asset_id": "wind_light_001",
     "path": "wind_light/wind_light_001.mp3",
     "event_type": "wind_light",
@@ -251,6 +801,48 @@
     "tags": [
       "wind",
       "outdoor",
+      "background"
+    ],
+    "intensity": 0.5734,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -22.69,
+      "peak_dbfs": 0.0,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.5734
+    }
+  },
+  {
+    "asset_id": "wind_light_002",
+    "path": "wind_light/wind_light_002.mp3",
+    "event_type": "wind_light",
+    "duration_ms": 13392,
+    "tags": [
+      "outdoor",
+      "wind",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.6548,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -17.83,
+      "peak_dbfs": 0.0,
+      "silence_ratio": 0.0373,
+      "estimated_intensity": 0.6548
+    }
+  },
+  {
+    "asset_id": "wind_light_003",
+    "path": "wind_light/wind_light_003.mp3",
+    "event_type": "wind_light",
+    "duration_ms": 18155,
+    "tags": [
+      "outdoor",
+      "wind",
+      "ambience",
       "background"
     ],
     "intensity": 0.5734,

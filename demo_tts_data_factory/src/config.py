@@ -13,9 +13,12 @@ from src.schemas import (
     AssetScanConfig,
     AssetSelectionConfig,
     BackgroundSchedulerConfig,
+    DialogueAudioConfig,
+    DialoguePlannerConfig,
     LLMEnhancerConfig,
     LoudnessConfig,
     MergeConfig,
+    OpenAIASRConfig,
     MixConfig,
     OpenAITTSConfig,
     StyleConfig,
@@ -60,6 +63,9 @@ def load_config(config_path: str | Path) -> AppConfig:
     variants_data = data.get("variants") or {}
     llm_enhancer_data = data.get("llm_enhancer") or {}
     openai_tts_data = data.get("openai_tts") or {}
+    dialogue_audio_data = data.get("dialogue_audio") or {}
+    dialogue_asr_data = dialogue_audio_data.get("asr") or {}
+    dialogue_planner_data = dialogue_audio_data.get("planner") or {}
     return AppConfig(
         input_mode=data.get("input_mode", "single"),
         text=data.get("text", ""),
@@ -90,6 +96,31 @@ def load_config(config_path: str | Path) -> AppConfig:
             instructions=openai_tts_data.get("instructions"),
             response_format=openai_tts_data.get("response_format", "wav"),
             speed=float(openai_tts_data.get("speed", 1.0)),
+        ),
+        dialogue_audio=DialogueAudioConfig(
+            input_dir=dialogue_audio_data.get("input_dir", "input"),
+            audio_path=dialogue_audio_data.get("audio_path"),
+            allowed_audio_extensions=list(
+                dialogue_audio_data.get("allowed_audio_extensions")
+                or [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
+            ),
+            scene_mode=dialogue_audio_data.get("scene_mode", "auto"),
+            emotion_mode=dialogue_audio_data.get("emotion_mode", "auto"),
+            anchor_method=dialogue_audio_data.get("anchor_method", "asr_segments_plus_pause"),
+            asr=OpenAIASRConfig(
+                api_key_env=dialogue_asr_data.get("api_key_env", "OPENAI_API_KEY"),
+                base_url=dialogue_asr_data.get("base_url", "https://api.openai.com/v1"),
+                model=dialogue_asr_data.get("model", "whisper-1"),
+                language=dialogue_asr_data.get("language", "zh"),
+                timeout_seconds=int(dialogue_asr_data.get("timeout_seconds", 180)),
+            ),
+            planner=DialoguePlannerConfig(
+                api_key_env=dialogue_planner_data.get("api_key_env", "OPENAI_API_KEY"),
+                base_url=dialogue_planner_data.get("base_url", "https://api.openai.com/v1"),
+                model=dialogue_planner_data.get("model", "gpt-4o-mini"),
+                temperature=float(dialogue_planner_data.get("temperature", 0.2)),
+                timeout_seconds=int(dialogue_planner_data.get("timeout_seconds", 90)),
+            ),
         ),
         mix=MixConfig(
             speech_gain_db=float(mix_data.get("speech_gain_db", 0.0)),

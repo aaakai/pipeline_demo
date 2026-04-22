@@ -7,6 +7,7 @@ from pathlib import Path
 import typer
 
 from src.config import load_config
+from src.dialogue.pipeline import run_dialogue_from_config
 from src.pipeline import run_from_config
 from src.sfx.manifest_builder import build_manifest
 
@@ -44,6 +45,25 @@ def scan_assets(
         config=app_config.asset_scan,
     )
     typer.echo(f"Wrote {len(records)} asset record(s): {manifest_path}")
+
+
+@app.command("mix-dialogue")
+def mix_dialogue(
+    config: str = typer.Option(
+        "configs/dialogue_audio.yaml",
+        "--config",
+        help="Path to YAML config.",
+    ),
+    audio: str | None = typer.Option(
+        None,
+        "--audio",
+        help="Optional dialogue audio path. If omitted, the newest file in input/ is used.",
+    ),
+) -> None:
+    manifests = run_dialogue_from_config(Path(config), audio_path=audio)
+    typer.echo(f"Generated {len(manifests)} dialogue mix case(s).")
+    for item in manifests:
+        typer.echo(f"- {item['case_id']}: {item['final_mix']}")
 
 
 @app.command(hidden=True)
