@@ -81,8 +81,14 @@ configs/scene_templates.yaml
 
 - `indoor_argument`
 - `office_talk`
+- `indoor_room_chat`
+- `restaurant_chat`
 - `rainy_street_chat`
+- `sunny_street_chat`
 - `cafe_chat`
+- `library_study_chat`
+- `factory_workshop_chat`
+- `after_exercise_chat`
 
 每个模板定义 foreground/background 事件、默认背景、事件数量上限、强事件上限、overlap policy、emotion bias 和 density level。
 
@@ -155,6 +161,11 @@ input/
 ```bash
 python -m src.main mix-dialogue --config configs/dialogue_audio.yaml
 ```
+
+默认会批量处理 `input/` 下所有受支持的音频文件。
+当前 `configs/dialogue_audio.yaml` 默认使用 `dialogue_audio.scene_mode: all_templates`。
+因此每条输入音频都会对 `configs/scene_templates.yaml` 中的每个场景模板各产出一组结果。
+如果有 3 条音频、10 个场景模板、3 个 variants，就会生成 `3 x 10 x 3 = 90` 个输出目录。
 
 也可以显式指定音频：
 

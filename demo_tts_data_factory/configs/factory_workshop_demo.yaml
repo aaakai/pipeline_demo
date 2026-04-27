@@ -1,0 +1,73 @@
+input_mode: single
+text: "车间里机器低鸣不停，金属件偶尔碰出脆响，远处还有持续的施工回声。老周压低声音说，先别开口，等这阵噪声过去再讲。小陈往前挪了半步，鞋底擦过地面，呼吸有点重：你是不是早就知道这批货会出问题？旁边的铁门被人重重带上，空气里像有一阵短促的泄压声。老周皱着眉回头看了一眼：我不是不告诉你，是现在说出来只会让现场更乱。"
+scene: factory_workshop_chat
+emotion: tense
+allowed_events:
+  - cloth_rustle
+  - footsteps_indoor
+  - footsteps_fast
+  - breath_heavy
+  - door_close_hard
+  - chair_move
+  - air_conditioner_hum
+  - fluorescent_light_hum
+  - distant_construction
+clean_voice_path:
+sfx_manifest_path: assets/sfx/manifest.json
+sample_rate: 24000
+channels: 1
+output_dir: output
+batch_input_path: examples/demo_inputs.jsonl
+scene_templates_path: configs/scene_templates.yaml
+enhancer: rule_based
+llm_enhancer:
+  api_key_env: OPENAI_API_KEY
+  base_url: https://api.openai.com/v1
+  model: gpt-4o-mini
+  temperature: 0.2
+tts_provider: mock
+openai_tts:
+  api_key_env: OPENAI_API_KEY
+  base_url: https://api.openai.com/v1
+  model: gpt-4o-mini-tts
+  voice: coral
+  instructions: "Speak naturally in Mandarin Chinese with tense, restrained emotion, like an audio drama actor in an industrial workshop."
+  response_format: wav
+  speed: 1.0
+mix:
+  speech_gain_db: 0.0
+  default_ducking_db: -4.0
+  fade_ms: 15
+  background_gain_db: -18.0
+merge:
+  enabled: true
+  same_event_gap_ms: 350
+  cloth_rustle_merge_gap_ms: 700
+style:
+  enable_keyword_style: true
+  enable_brief_style: true
+asset_scan:
+  audio_extensions: [".wav", ".mp3", ".flac"]
+  auto_intensity: true
+  preserve_manual_overrides: true
+asset_selection:
+  strategy: weighted_top_k
+  top_k: 3
+  avoid_recent: true
+  recent_window: 6
+background_scheduler:
+  enabled: true
+  max_background_layers: 4
+  max_accent_events: 5
+  min_gap_ms: 3000
+  random_offset_ms: 1200
+loudness:
+  enabled: true
+  target_speech_peak_dbfs: -3.0
+  max_mix_peak_dbfs: -1.0
+  background_headroom_db: 14.0
+  max_loudness_compensation_db: 6.0
+variants:
+  enabled: true
+  names: [subtle, balanced, cinematic]
+random_seed: 42

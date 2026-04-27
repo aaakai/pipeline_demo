@@ -1,0 +1,5 @@
+cd d:\vscode_projects\pipeline_demo\demo_tts_data_factory
+..\ .venv_local\Scripts\python.exe -m src.main mix-dialogue --config configs/dialogue_audio.yaml
+
+
+..\ .venv_local\Scripts\python.exe -m src.main mix-dialogue --config configs/dialogue_audio.yaml --audio input\zouzheqiao.mp3

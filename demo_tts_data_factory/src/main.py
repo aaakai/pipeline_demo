@@ -57,7 +57,7 @@ def mix_dialogue(
     audio: str | None = typer.Option(
         None,
         "--audio",
-        help="Optional dialogue audio path. If omitted, the newest file in input/ is used.",
+        help="Optional dialogue audio path. If omitted, all supported files in input/ are processed.",
     ),
 ) -> None:
     manifests = run_dialogue_from_config(Path(config), audio_path=audio)

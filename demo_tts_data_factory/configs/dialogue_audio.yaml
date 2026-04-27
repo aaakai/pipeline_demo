@@ -1,6 +1,6 @@
 input_mode: single
 text: ""
-scene: restaurant_chat
+scene: all_templates
 emotion: tense
 allowed_events:
   - cup_hit
@@ -20,6 +20,22 @@ allowed_events:
   - keyboard_typing
   - phone_vibrate
   - light_switch_click
+  - library_room_tone
+  - book_page_turn
+  - pen_write
+  - station_crowd
+  - train_arrive
+  - metro_announcement
+  - ticket_gate_beep
+  - hospital_ambience
+  - medical_monitor_beep
+  - trolley_roll
+  - espresso_machine
+  - coffee_grinder
+  - milk_steam
+  - machine_hum
+  - metal_clank
+  - hydraulic_hiss
   - restaurant_murmur
   - cutlery_clink
   - plate_set_down
@@ -54,7 +70,7 @@ dialogue_audio:
   input_dir: input
   audio_path:
   allowed_audio_extensions: [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
-  scene_mode: config
+  scene_mode: all_templates
   emotion_mode: auto
   anchor_method: asr_segments_plus_pause
   asr:

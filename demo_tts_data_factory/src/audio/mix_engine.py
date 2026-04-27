@@ -37,6 +37,9 @@ class MixEngine:
         for item in timeline:
             if not item.asset_path:
                 continue
+            asset_file = Path(item.asset_path)
+            if not asset_file.exists():
+                continue
             sfx = load_audio(item.asset_path, self.sample_rate, self.channels)
             max_len = max(1, item.end_ms - item.start_ms)
             if not item.foreground and len(sfx) < max_len:

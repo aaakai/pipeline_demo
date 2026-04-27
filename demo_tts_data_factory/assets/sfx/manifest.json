@@ -1,9 +1,9 @@
 [
   {
-    "asset_id": "241870__jaimage__air-conditioner",
-    "path": "air_conditioner_hum/241870__jaimage__air-conditioner.wav",
+    "asset_id": "air_conditioner_hum001",
+    "path": "air_conditioner_hum/air_conditioner_hum001.wav",
     "event_type": "air_conditioner_hum",
-    "duration_ms": 29611,
+    "duration_ms": 198396,
     "tags": [
       "indoor",
       "appliance",
@@ -11,43 +11,21 @@
       "ambience",
       "background"
     ],
-    "intensity": 0.0859,
-    "sample_rate": 48000,
-    "channels": 2,
-    "analysis": {
-      "rms_dbfs": -40.34,
-      "peak_dbfs": -23.0,
-      "silence_ratio": 0.0135,
-      "estimated_intensity": 0.0859
-    }
-  },
-  {
-    "asset_id": "334946__ricardofm__001_house_airconditioner",
-    "path": "air_conditioner_hum/334946__ricardofm__001_house_airconditioner.wav",
-    "event_type": "air_conditioner_hum",
-    "duration_ms": 10423,
-    "tags": [
-      "indoor",
-      "appliance",
-      "hum",
-      "ambience",
-      "background"
-    ],
-    "intensity": 0.05,
+    "intensity": 0.0937,
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -54.6,
-      "peak_dbfs": -40.65,
-      "silence_ratio": 0.3619,
-      "estimated_intensity": 0.05
+      "rms_dbfs": -40.18,
+      "peak_dbfs": -27.62,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.0937
     }
   },
   {
-    "asset_id": "515859__lilmati__air-conditioner-fan-hum",
-    "path": "air_conditioner_hum/515859__lilmati__air-conditioner-fan-hum.wav",
+    "asset_id": "air_conditioner_hum002",
+    "path": "air_conditioner_hum/air_conditioner_hum002.wav",
     "event_type": "air_conditioner_hum",
-    "duration_ms": 70855,
+    "duration_ms": 334254,
     "tags": [
       "indoor",
       "appliance",
@@ -55,21 +33,21 @@
       "ambience",
       "background"
     ],
-    "intensity": 0.4763,
+    "intensity": 0.3755,
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -25.59,
-      "peak_dbfs": -12.0,
-      "silence_ratio": 0.0212,
-      "estimated_intensity": 0.4763
+      "rms_dbfs": -29.39,
+      "peak_dbfs": -13.86,
+      "silence_ratio": 0.0036,
+      "estimated_intensity": 0.3755
     }
   },
   {
-    "asset_id": "830451__ixwolf__air-conditioner",
-    "path": "air_conditioner_hum/830451__ixwolf__air-conditioner.wav",
+    "asset_id": "air_conditioner_hum003",
+    "path": "air_conditioner_hum/air_conditioner_hum003.wav",
     "event_type": "air_conditioner_hum",
-    "duration_ms": 23000,
+    "duration_ms": 20618,
     "tags": [
       "indoor",
       "appliance",
@@ -77,14 +55,80 @@
       "ambience",
       "background"
     ],
-    "intensity": 0.5847,
-    "sample_rate": 48000,
-    "channels": 1,
+    "intensity": 0.8772,
+    "sample_rate": 44100,
+    "channels": 2,
     "analysis": {
-      "rms_dbfs": -28.2,
-      "peak_dbfs": -3.3,
-      "silence_ratio": 0.0087,
-      "estimated_intensity": 0.5847
+      "rms_dbfs": -14.92,
+      "peak_dbfs": -1.54,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.8772
+    }
+  },
+  {
+    "asset_id": "air_conditioner_hum004",
+    "path": "air_conditioner_hum/air_conditioner_hum004.mp3",
+    "event_type": "air_conditioner_hum",
+    "duration_ms": 321437,
+    "tags": [
+      "indoor",
+      "appliance",
+      "hum",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.8262,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -16.51,
+      "peak_dbfs": -2.66,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.8262
+    }
+  },
+  {
+    "asset_id": "air_conditioner_hum005",
+    "path": "air_conditioner_hum/air_conditioner_hum005.mp3",
+    "event_type": "air_conditioner_hum",
+    "duration_ms": 180048,
+    "tags": [
+      "indoor",
+      "appliance",
+      "hum",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.227,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -33.3,
+      "peak_dbfs": -18.25,
+      "silence_ratio": 0.0011,
+      "estimated_intensity": 0.227
+    }
+  },
+  {
+    "asset_id": "air_conditioner_hum006",
+    "path": "air_conditioner_hum/air_conditioner_hum006.mp3",
+    "event_type": "air_conditioner_hum",
+    "duration_ms": 31560,
+    "tags": [
+      "indoor",
+      "appliance",
+      "hum",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.1842,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -35.52,
+      "peak_dbfs": -23.99,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.1842
     }
   },
   {
@@ -341,30 +385,93 @@
     }
   },
   {
-    "asset_id": "breath_heavy_001",
-    "path": "breath_heavy/breath_heavy_001.mp3",
-    "event_type": "breath_heavy",
-    "duration_ms": 7340,
+    "asset_id": "book_page_turn_001",
+    "path": "book_page_turn/book_page_turn_001.mp3",
+    "event_type": "book_page_turn",
+    "duration_ms": 1228,
     "tags": [
-      "breath",
-      "tense",
+      "library",
+      "book",
+      "paper",
+      "study",
+      "object",
       "foreground"
     ],
-    "intensity": 0.6584,
+    "intensity": 0.4132,
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -21.35,
-      "peak_dbfs": -1.75,
-      "silence_ratio": 0.2568,
-      "estimated_intensity": 0.6584
+      "rms_dbfs": -36.11,
+      "peak_dbfs": -1.45,
+      "silence_ratio": 0.1538,
+      "estimated_intensity": 0.4132
     }
   },
   {
-    "asset_id": "breath_heavy_002",
-    "path": "breath_heavy/breath_heavy_002.mp3",
+    "asset_id": "breath_heavy-001",
+    "path": "breath_heavy/breath_heavy-001.wav",
     "event_type": "breath_heavy",
-    "duration_ms": 17659,
+    "duration_ms": 5162,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.1165,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -36.23,
+      "peak_dbfs": -18.14,
+      "silence_ratio": 0.1538,
+      "estimated_intensity": 0.1165
+    }
+  },
+  {
+    "asset_id": "breath_heavy-002",
+    "path": "breath_heavy/breath_heavy-002.wav",
+    "event_type": "breath_heavy",
+    "duration_ms": 3565,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.4195,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -31.38,
+      "peak_dbfs": -9.29,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.4195
+    }
+  },
+  {
+    "asset_id": "breath_heavy-003",
+    "path": "breath_heavy/breath_heavy-003.wav",
+    "event_type": "breath_heavy",
+    "duration_ms": 4486,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.2305,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -34.2,
+      "peak_dbfs": -15.53,
+      "silence_ratio": 0.0667,
+      "estimated_intensity": 0.2305
+    }
+  },
+  {
+    "asset_id": "breath_heavy-004",
+    "path": "breath_heavy/breath_heavy-004.wav",
+    "event_type": "breath_heavy",
+    "duration_ms": 5851,
     "tags": [
       "breath",
       "vocal_reaction",
@@ -372,32 +479,32 @@
     ],
     "intensity": 0.05,
     "sample_rate": 44100,
-    "channels": 1,
+    "channels": 2,
     "analysis": {
-      "rms_dbfs": -41.62,
-      "peak_dbfs": -18.59,
-      "silence_ratio": 0.4011,
+      "rms_dbfs": -42.08,
+      "peak_dbfs": -21.77,
+      "silence_ratio": 0.0678,
       "estimated_intensity": 0.05
     }
   },
   {
-    "asset_id": "breath_heavy_003",
-    "path": "breath_heavy/breath_heavy_003.mp3",
+    "asset_id": "breath_heavy-005",
+    "path": "breath_heavy/breath_heavy-005.wav",
     "event_type": "breath_heavy",
-    "duration_ms": 12648,
+    "duration_ms": 4608,
     "tags": [
       "breath",
       "vocal_reaction",
       "foreground"
     ],
-    "intensity": 0.4666,
-    "sample_rate": 48000,
+    "intensity": 0.05,
+    "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -28.26,
-      "peak_dbfs": -8.19,
-      "silence_ratio": 0.0945,
-      "estimated_intensity": 0.4666
+      "rms_dbfs": -42.01,
+      "peak_dbfs": -20.12,
+      "silence_ratio": 0.1489,
+      "estimated_intensity": 0.05
     }
   },
   {
@@ -999,127 +1106,280 @@
     }
   },
   {
-    "asset_id": "chair_move_mock_001",
-    "path": "chair_move/chair_move_mock_001.wav",
+    "asset_id": "chair_move-001",
+    "path": "chair_move/chair_move-001.wav",
     "event_type": "chair_move",
-    "duration_ms": 700,
-    "tags": [
-      "indoor",
-      "movement",
-      "foreground"
-    ],
-    "intensity": 0.3491,
-    "sample_rate": 24000,
-    "channels": 1,
-    "analysis": {
-      "rms_dbfs": -27.22,
-      "peak_dbfs": -17.79,
-      "silence_ratio": 0.0,
-      "estimated_intensity": 0.3491
-    }
-  },
-  {
-    "asset_id": "chair_move_mock_002",
-    "path": "chair_move/chair_move_mock_002.mp3",
-    "event_type": "chair_move",
-    "duration_ms": 6609,
+    "duration_ms": 853,
     "tags": [
       "chair",
       "indoor",
       "movement",
       "foreground"
     ],
-    "intensity": 0.221,
+    "intensity": 0.3467,
     "sample_rate": 44100,
-    "channels": 1,
+    "channels": 2,
     "analysis": {
-      "rms_dbfs": -30.03,
-      "peak_dbfs": -11.94,
-      "silence_ratio": 0.5075,
-      "estimated_intensity": 0.221
+      "rms_dbfs": -31.1,
+      "peak_dbfs": -11.5,
+      "silence_ratio": 0.1111,
+      "estimated_intensity": 0.3467
     }
   },
   {
-    "asset_id": "chair_move_mock_003",
-    "path": "chair_move/chair_move_mock_003.mp3",
+    "asset_id": "chair_move-002",
+    "path": "chair_move/chair_move-002.wav",
     "event_type": "chair_move",
-    "duration_ms": 3864,
+    "duration_ms": 572,
     "tags": [
       "chair",
       "indoor",
       "movement",
       "foreground"
     ],
-    "intensity": 0.4562,
-    "sample_rate": 24000,
+    "intensity": 0.2577,
+    "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -31.91,
-      "peak_dbfs": -4.13,
-      "silence_ratio": 0.1282,
-      "estimated_intensity": 0.4562
+      "rms_dbfs": -33.55,
+      "peak_dbfs": -16.01,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.2577
     }
   },
   {
-    "asset_id": "cloth_rustle_001",
-    "path": "cloth_rustle/cloth_rustle_001.mp3",
-    "event_type": "cloth_rustle",
-    "duration_ms": 4560,
+    "asset_id": "chair_move-003",
+    "path": "chair_move/chair_move-003.wav",
+    "event_type": "chair_move",
+    "duration_ms": 1368,
     "tags": [
-      "cloth",
+      "chair",
+      "indoor",
       "movement",
       "foreground"
     ],
-    "intensity": 0.3812,
-    "sample_rate": 24000,
+    "intensity": 0.2492,
+    "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -28.98,
-      "peak_dbfs": -1.23,
-      "silence_ratio": 0.6522,
-      "estimated_intensity": 0.3812
+      "rms_dbfs": -30.41,
+      "peak_dbfs": -11.49,
+      "silence_ratio": 0.4286,
+      "estimated_intensity": 0.2492
     }
   },
   {
-    "asset_id": "cloth_rustle_002",
-    "path": "cloth_rustle/cloth_rustle_002.mp3",
+    "asset_id": "chair_move-004",
+    "path": "chair_move/chair_move-004.wav",
+    "event_type": "chair_move",
+    "duration_ms": 1745,
+    "tags": [
+      "chair",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.3739,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -27.65,
+      "peak_dbfs": -6.09,
+      "silence_ratio": 0.5,
+      "estimated_intensity": 0.3739
+    }
+  },
+  {
+    "asset_id": "chair_move-005",
+    "path": "chair_move/chair_move-005.wav",
+    "event_type": "chair_move",
+    "duration_ms": 998,
+    "tags": [
+      "chair",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.3807,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -27.98,
+      "peak_dbfs": -9.28,
+      "silence_ratio": 0.3,
+      "estimated_intensity": 0.3807
+    }
+  },
+  {
+    "asset_id": "cloth_rustle-001",
+    "path": "cloth_rustle/cloth_rustle-001.wav",
     "event_type": "cloth_rustle",
-    "duration_ms": 30504,
+    "duration_ms": 3410,
     "tags": [
       "cloth",
       "indoor",
       "movement",
       "foreground"
     ],
-    "intensity": 0.4154,
-    "sample_rate": 48000,
-    "channels": 1,
+    "intensity": 0.0693,
+    "sample_rate": 44100,
+    "channels": 2,
     "analysis": {
-      "rms_dbfs": -36.16,
-      "peak_dbfs": -3.91,
-      "silence_ratio": 0.0196,
-      "estimated_intensity": 0.4154
+      "rms_dbfs": -40.67,
+      "peak_dbfs": -17.71,
+      "silence_ratio": 0.0571,
+      "estimated_intensity": 0.0693
     }
   },
   {
-    "asset_id": "cloth_rustle_003",
-    "path": "cloth_rustle/cloth_rustle_003.mp3",
+    "asset_id": "cloth_rustle-002",
+    "path": "cloth_rustle/cloth_rustle-002.wav",
     "event_type": "cloth_rustle",
-    "duration_ms": 30504,
+    "duration_ms": 3011,
     "tags": [
       "cloth",
       "indoor",
       "movement",
       "foreground"
     ],
-    "intensity": 0.4154,
-    "sample_rate": 48000,
-    "channels": 1,
+    "intensity": 0.1473,
+    "sample_rate": 44100,
+    "channels": 2,
     "analysis": {
-      "rms_dbfs": -36.16,
-      "peak_dbfs": -3.91,
-      "silence_ratio": 0.0196,
-      "estimated_intensity": 0.4154
+      "rms_dbfs": -39.21,
+      "peak_dbfs": -13.5,
+      "silence_ratio": 0.129,
+      "estimated_intensity": 0.1473
+    }
+  },
+  {
+    "asset_id": "cloth_rustle-003",
+    "path": "cloth_rustle/cloth_rustle-003.wav",
+    "event_type": "cloth_rustle",
+    "duration_ms": 2922,
+    "tags": [
+      "cloth",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.3732,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -35.53,
+      "peak_dbfs": -5.39,
+      "silence_ratio": 0.1,
+      "estimated_intensity": 0.3732
+    }
+  },
+  {
+    "asset_id": "cloth_rustle-004",
+    "path": "cloth_rustle/cloth_rustle-004.wav",
+    "event_type": "cloth_rustle",
+    "duration_ms": 1616,
+    "tags": [
+      "cloth",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.543,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -24.68,
+      "peak_dbfs": -1.55,
+      "silence_ratio": 0.4118,
+      "estimated_intensity": 0.543
+    }
+  },
+  {
+    "asset_id": "cloth_rustle-005",
+    "path": "cloth_rustle/cloth_rustle-005.wav",
+    "event_type": "cloth_rustle",
+    "duration_ms": 2648,
+    "tags": [
+      "cloth",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.0714,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -37.99,
+      "peak_dbfs": -18.22,
+      "silence_ratio": 0.1852,
+      "estimated_intensity": 0.0714
+    }
+  },
+  {
+    "asset_id": "cloth_rustle-006",
+    "path": "cloth_rustle/cloth_rustle-006.wav",
+    "event_type": "cloth_rustle",
+    "duration_ms": 3244,
+    "tags": [
+      "cloth",
+      "indoor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.063,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -39.03,
+      "peak_dbfs": -21.61,
+      "silence_ratio": 0.1515,
+      "estimated_intensity": 0.063
+    }
+  },
+  {
+    "asset_id": "dragon-studio-coffee-grinder-467469",
+    "path": "coffee_grinder/dragon-studio-coffee-grinder-467469.mp3",
+    "event_type": "coffee_grinder",
+    "duration_ms": 2040,
+    "tags": [
+      "cafe",
+      "coffee",
+      "grinder",
+      "machine",
+      "appliance",
+      "foreground"
+    ],
+    "intensity": 0.49,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -28.26,
+      "peak_dbfs": -7.79,
+      "silence_ratio": 0.0476,
+      "estimated_intensity": 0.49
+    }
+  },
+  {
+    "asset_id": "soundreality-coffee-grinder-154851",
+    "path": "coffee_grinder/soundreality-coffee-grinder-154851.mp3",
+    "event_type": "coffee_grinder",
+    "duration_ms": 25272,
+    "tags": [
+      "cafe",
+      "coffee",
+      "grinder",
+      "machine",
+      "appliance",
+      "foreground"
+    ],
+    "intensity": 0.8988,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -14.92,
+      "peak_dbfs": 0.0,
+      "silence_ratio": 0.0158,
+      "estimated_intensity": 0.8988
     }
   },
   {
@@ -1307,45 +1567,108 @@
     }
   },
   {
-    "asset_id": "cup_hit_002",
-    "path": "cup_hit/cup_hit_002.mp3",
+    "asset_id": "cup_hit-001",
+    "path": "cup_hit/cup_hit-001.wav",
     "event_type": "cup_hit",
-    "duration_ms": 1176,
+    "duration_ms": 406,
     "tags": [
       "impact",
       "indoor",
       "object",
       "foreground"
     ],
-    "intensity": 0.3937,
-    "sample_rate": 24000,
-    "channels": 2,
-    "analysis": {
-      "rms_dbfs": -35.15,
-      "peak_dbfs": -2.68,
-      "silence_ratio": 0.9167,
-      "estimated_intensity": 0.3937
-    }
-  },
-  {
-    "asset_id": "cup_hit_003",
-    "path": "cup_hit/cup_hit_003.mp3",
-    "event_type": "cup_hit",
-    "duration_ms": 10057,
-    "tags": [
-      "impact",
-      "indoor",
-      "object",
-      "foreground"
-    ],
-    "intensity": 0.6726,
+    "intensity": 0.6323,
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -24.68,
-      "peak_dbfs": -0.02,
-      "silence_ratio": 0.6337,
-      "estimated_intensity": 0.6726
+      "rms_dbfs": -27.98,
+      "peak_dbfs": -7.23,
+      "silence_ratio": 0.2,
+      "estimated_intensity": 0.6323
+    }
+  },
+  {
+    "asset_id": "cup_hit-002",
+    "path": "cup_hit/cup_hit-002.wav",
+    "event_type": "cup_hit",
+    "duration_ms": 194,
+    "tags": [
+      "impact",
+      "indoor",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.4391,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -32.8,
+      "peak_dbfs": -16.76,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.4391
+    }
+  },
+  {
+    "asset_id": "cup_hit-003",
+    "path": "cup_hit/cup_hit-003.wav",
+    "event_type": "cup_hit",
+    "duration_ms": 300,
+    "tags": [
+      "impact",
+      "indoor",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.6515,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -26.69,
+      "peak_dbfs": -4.92,
+      "silence_ratio": 0.3333,
+      "estimated_intensity": 0.6515
+    }
+  },
+  {
+    "asset_id": "cup_hit-004",
+    "path": "cup_hit/cup_hit-004.wav",
+    "event_type": "cup_hit",
+    "duration_ms": 465,
+    "tags": [
+      "impact",
+      "indoor",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.4579,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -34.74,
+      "peak_dbfs": -13.58,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.4579
+    }
+  },
+  {
+    "asset_id": "cup_hit-005",
+    "path": "cup_hit/cup_hit-005.wav",
+    "event_type": "cup_hit",
+    "duration_ms": 253,
+    "tags": [
+      "impact",
+      "indoor",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.6633,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -23.54,
+      "peak_dbfs": -7.7,
+      "silence_ratio": 0.3333,
+      "estimated_intensity": 0.6633
     }
   },
   {
@@ -1633,6 +1956,29 @@
     }
   },
   {
+    "asset_id": "freesound_community-espresso-machine-78082",
+    "path": "espresso_machine/freesound_community-espresso-machine-78082.mp3",
+    "event_type": "espresso_machine",
+    "duration_ms": 64944,
+    "tags": [
+      "cafe",
+      "coffee",
+      "espresso",
+      "machine",
+      "appliance",
+      "foreground"
+    ],
+    "intensity": 0.3356,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -34.94,
+      "peak_dbfs": -5.03,
+      "silence_ratio": 0.2585,
+      "estimated_intensity": 0.3356
+    }
+  },
+  {
     "asset_id": "125064__everydaysounds__faulty-fluorescent-light-starter-hum",
     "path": "fluorescent_light_hum/125064__everydaysounds__faulty-fluorescent-light-starter-hum.wav",
     "event_type": "fluorescent_light_hum",
@@ -1762,32 +2108,10 @@
     }
   },
   {
-    "asset_id": "366111__wakuwakuwakuwaku__indoor-footsteps",
-    "path": "footsteps_indoor/366111__wakuwakuwakuwaku__indoor-footsteps.wav",
+    "asset_id": "footsteps_indoor-001",
+    "path": "footsteps_indoor/footsteps_indoor-001.wav",
     "event_type": "footsteps_indoor",
-    "duration_ms": 3822,
-    "tags": [
-      "movement",
-      "indoor",
-      "floor",
-      "footsteps",
-      "foreground"
-    ],
-    "intensity": 0.05,
-    "sample_rate": 96000,
-    "channels": 2,
-    "analysis": {
-      "rms_dbfs": -46.65,
-      "peak_dbfs": -23.09,
-      "silence_ratio": 0.6923,
-      "estimated_intensity": 0.05
-    }
-  },
-  {
-    "asset_id": "459964__florianreichelt__footsteps-on-concrete",
-    "path": "footsteps_indoor/459964__florianreichelt__footsteps-on-concrete.mp3",
-    "event_type": "footsteps_indoor",
-    "duration_ms": 19853,
+    "duration_ms": 3321,
     "tags": [
       "movement",
       "indoor",
@@ -1799,17 +2123,17 @@
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -50.05,
-      "peak_dbfs": -17.11,
-      "silence_ratio": 0.799,
+      "rms_dbfs": -48.26,
+      "peak_dbfs": -21.96,
+      "silence_ratio": 0.8529,
       "estimated_intensity": 0.05
     }
   },
   {
-    "asset_id": "642956__filippopolverini__indoor-footsteps-foley",
-    "path": "footsteps_indoor/642956__filippopolverini__indoor-footsteps-foley.wav",
+    "asset_id": "footsteps_indoor-002",
+    "path": "footsteps_indoor/footsteps_indoor-002.wav",
     "event_type": "footsteps_indoor",
-    "duration_ms": 55680,
+    "duration_ms": 3343,
     "tags": [
       "movement",
       "indoor",
@@ -1818,12 +2142,34 @@
       "foreground"
     ],
     "intensity": 0.05,
-    "sample_rate": 48000,
-    "channels": 1,
+    "sample_rate": 44100,
+    "channels": 2,
     "analysis": {
-      "rms_dbfs": -58.71,
-      "peak_dbfs": -27.21,
-      "silence_ratio": 0.9246,
+      "rms_dbfs": -49.5,
+      "peak_dbfs": -19.68,
+      "silence_ratio": 0.8529,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "footsteps_indoor-003",
+    "path": "footsteps_indoor/footsteps_indoor-003.wav",
+    "event_type": "footsteps_indoor",
+    "duration_ms": 3326,
+    "tags": [
+      "movement",
+      "indoor",
+      "floor",
+      "footsteps",
+      "foreground"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -49.47,
+      "peak_dbfs": -19.87,
+      "silence_ratio": 0.8235,
       "estimated_intensity": 0.05
     }
   },
@@ -2134,6 +2480,75 @@
     }
   },
   {
+    "asset_id": "freesound_community-012174_kwun-tong-hospital-ambience9wav-58596",
+    "path": "hospital_ambience/freesound_community-012174_kwun-tong-hospital-ambience9wav-58596.mp3",
+    "event_type": "hospital_ambience",
+    "duration_ms": 122040,
+    "tags": [
+      "hospital",
+      "indoor",
+      "clinical",
+      "corridor",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.6459,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -23.98,
+      "peak_dbfs": -4.64,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.6459
+    }
+  },
+  {
+    "asset_id": "dragon-studio-steam-hissing-386157",
+    "path": "hydraulic_hiss/dragon-studio-steam-hissing-386157.mp3",
+    "event_type": "hydraulic_hiss",
+    "duration_ms": 1097,
+    "tags": [
+      "industrial",
+      "hydraulic",
+      "air",
+      "machine",
+      "ambience",
+      "foreground"
+    ],
+    "intensity": 0.5118,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -22.85,
+      "peak_dbfs": -4.47,
+      "silence_ratio": 0.4545,
+      "estimated_intensity": 0.5118
+    }
+  },
+  {
+    "asset_id": "freesound_community-air-hiss-102406",
+    "path": "hydraulic_hiss/freesound_community-air-hiss-102406.mp3",
+    "event_type": "hydraulic_hiss",
+    "duration_ms": 2280,
+    "tags": [
+      "industrial",
+      "hydraulic",
+      "air",
+      "machine",
+      "ambience",
+      "foreground"
+    ],
+    "intensity": 0.7191,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -19.41,
+      "peak_dbfs": -2.1,
+      "silence_ratio": 0.1739,
+      "estimated_intensity": 0.7191
+    }
+  },
+  {
     "asset_id": "331428__m4taiori__mechanical-keyboard-typing",
     "path": "keyboard_typing/331428__m4taiori__mechanical-keyboard-typing.mp3",
     "event_type": "keyboard_typing",
@@ -2244,6 +2659,29 @@
     }
   },
   {
+    "asset_id": "freesound_community-metal-clang-sound-81634",
+    "path": "library_room_tone/freesound_community-metal-clang-sound-81634.mp3",
+    "event_type": "library_room_tone",
+    "duration_ms": 1440,
+    "tags": [
+      "library",
+      "indoor",
+      "quiet",
+      "study",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.3868,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -28.7,
+      "peak_dbfs": 0.0,
+      "silence_ratio": 0.8667,
+      "estimated_intensity": 0.3868
+    }
+  },
+  {
     "asset_id": "423512__someonecool15__light-switch-click-on-and-off",
     "path": "light_switch_click/423512__someonecool15__light-switch-click-on-and-off.mp3",
     "event_type": "light_switch_click",
@@ -2332,6 +2770,98 @@
     }
   },
   {
+    "asset_id": "dragon-studio-creepy-industrial-hum-482882",
+    "path": "machine_hum/dragon-studio-creepy-industrial-hum-482882.mp3",
+    "event_type": "machine_hum",
+    "duration_ms": 18840,
+    "tags": [
+      "industrial",
+      "factory",
+      "machine",
+      "hum",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.7488,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -18.57,
+      "peak_dbfs": -4.25,
+      "silence_ratio": 0.0265,
+      "estimated_intensity": 0.7488
+    }
+  },
+  {
+    "asset_id": "freesound_community-machine-hum-74742",
+    "path": "machine_hum/freesound_community-machine-hum-74742.mp3",
+    "event_type": "machine_hum",
+    "duration_ms": 14856,
+    "tags": [
+      "industrial",
+      "factory",
+      "machine",
+      "hum",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.9211,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -12.78,
+      "peak_dbfs": -1.41,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.9211
+    }
+  },
+  {
+    "asset_id": "fadingembersaudio-heart-monitor-hospital-ambience-430219",
+    "path": "medical_monitor_beep/fadingembersaudio-heart-monitor-hospital-ambience-430219.mp3",
+    "event_type": "medical_monitor_beep",
+    "duration_ms": 21432,
+    "tags": [
+      "hospital",
+      "monitor",
+      "beep",
+      "clinical",
+      "signal",
+      "foreground"
+    ],
+    "intensity": 0.1764,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -32.82,
+      "peak_dbfs": -19.98,
+      "silence_ratio": 0.1721,
+      "estimated_intensity": 0.1764
+    }
+  },
+  {
+    "asset_id": "freesound_community-heart-monitor-beep-96554",
+    "path": "medical_monitor_beep/freesound_community-heart-monitor-beep-96554.mp3",
+    "event_type": "medical_monitor_beep",
+    "duration_ms": 9648,
+    "tags": [
+      "hospital",
+      "monitor",
+      "beep",
+      "clinical",
+      "signal",
+      "foreground"
+    ],
+    "intensity": 0.553,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -17.26,
+      "peak_dbfs": -10.31,
+      "silence_ratio": 0.3505,
+      "estimated_intensity": 0.553
+    }
+  },
+  {
     "asset_id": "157243__link-boy__page-turn",
     "path": "menu_page_turn/157243__link-boy__page-turn.mp3",
     "event_type": "menu_page_turn",
@@ -2395,6 +2925,98 @@
       "peak_dbfs": -2.6,
       "silence_ratio": 0.4636,
       "estimated_intensity": 0.2198
+    }
+  },
+  {
+    "asset_id": "freesound_community-metal-clang-sound-81634_2",
+    "path": "metal_clank/freesound_community-metal-clang-sound-81634.mp3",
+    "event_type": "metal_clank",
+    "duration_ms": 1440,
+    "tags": [
+      "industrial",
+      "metal",
+      "impact",
+      "workshop",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.3868,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -28.7,
+      "peak_dbfs": 0.0,
+      "silence_ratio": 0.8667,
+      "estimated_intensity": 0.3868
+    }
+  },
+  {
+    "asset_id": "metro_announcement_001",
+    "path": "metro_announcement/metro_announcement_001.wav",
+    "event_type": "metro_announcement",
+    "duration_ms": 5100,
+    "tags": [
+      "subway",
+      "station",
+      "announcement",
+      "platform",
+      "signal",
+      "background"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -43.7,
+      "peak_dbfs": -31.09,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "dragon-studio-espresso-machine-steaming-milk-494316",
+    "path": "milk_steam/dragon-studio-espresso-machine-steaming-milk-494316.mp3",
+    "event_type": "milk_steam",
+    "duration_ms": 2712,
+    "tags": [
+      "cafe",
+      "coffee",
+      "steam",
+      "milk",
+      "appliance",
+      "foreground"
+    ],
+    "intensity": 0.6939,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -19.38,
+      "peak_dbfs": -4.86,
+      "silence_ratio": 0.1071,
+      "estimated_intensity": 0.6939
+    }
+  },
+  {
+    "asset_id": "freesound_community-steaming-milk-49714",
+    "path": "milk_steam/freesound_community-steaming-milk-49714.mp3",
+    "event_type": "milk_steam",
+    "duration_ms": 188592,
+    "tags": [
+      "cafe",
+      "coffee",
+      "steam",
+      "milk",
+      "appliance",
+      "foreground"
+    ],
+    "intensity": 0.4297,
+    "sample_rate": 48000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -28.8,
+      "peak_dbfs": -5.06,
+      "silence_ratio": 0.3287,
+      "estimated_intensity": 0.4297
     }
   },
   {
@@ -2486,14 +3108,15 @@
     }
   },
   {
-    "asset_id": "175039__makofox__phone-vibrate",
-    "path": "phone_vibrate/175039__makofox__phone-vibrate.wav",
-    "event_type": "phone_vibrate",
-    "duration_ms": 12827,
+    "asset_id": "pen_write_001",
+    "path": "pen_write/pen_write_001.wav",
+    "event_type": "pen_write",
+    "duration_ms": 4831,
     "tags": [
-      "phone",
-      "indoor",
-      "buzz",
+      "library",
+      "pen",
+      "desk",
+      "study",
       "object",
       "foreground"
     ],
@@ -2501,17 +3124,17 @@
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -45.7,
-      "peak_dbfs": -33.53,
-      "silence_ratio": 0.6899,
+      "rms_dbfs": -43.34,
+      "peak_dbfs": -12.65,
+      "silence_ratio": 0.3061,
       "estimated_intensity": 0.05
     }
   },
   {
-    "asset_id": "369842__splicesound__cell-phone-vibrate-in-bag-backpack",
-    "path": "phone_vibrate/369842__splicesound__cell-phone-vibrate-in-bag-backpack.wav",
+    "asset_id": "phone_vibrate_-001",
+    "path": "phone_vibrate/phone_vibrate_-001.wav",
     "event_type": "phone_vibrate",
-    "duration_ms": 4000,
+    "duration_ms": 1976,
     "tags": [
       "phone",
       "indoor",
@@ -2519,58 +3142,80 @@
       "object",
       "foreground"
     ],
-    "intensity": 0.05,
-    "sample_rate": 48000,
-    "channels": 1,
-    "analysis": {
-      "rms_dbfs": -45.14,
-      "peak_dbfs": -33.55,
-      "silence_ratio": 0.45,
-      "estimated_intensity": 0.05
-    }
-  },
-  {
-    "asset_id": "384487__mobaudio__cell-phone-vibrate-glass_loopable",
-    "path": "phone_vibrate/384487__mobaudio__cell-phone-vibrate-glass_loopable.wav",
-    "event_type": "phone_vibrate",
-    "duration_ms": 3031,
-    "tags": [
-      "phone",
-      "indoor",
-      "buzz",
-      "object",
-      "foreground"
-    ],
-    "intensity": 0.5529,
-    "sample_rate": 48000,
-    "channels": 1,
-    "analysis": {
-      "rms_dbfs": -20.41,
-      "peak_dbfs": -5.52,
-      "silence_ratio": 0.4194,
-      "estimated_intensity": 0.5529
-    }
-  },
-  {
-    "asset_id": "666611__mbytemama93__walking-on-driveway-phone-vibrating_190654_track0_190654-1671067649769",
-    "path": "phone_vibrate/666611__mbytemama93__walking-on-driveway-phone-vibrating_190654_track0_190654-1671067649769.mp3",
-    "event_type": "phone_vibrate",
-    "duration_ms": 8000,
-    "tags": [
-      "phone",
-      "indoor",
-      "buzz",
-      "object",
-      "foreground"
-    ],
-    "intensity": 0.05,
+    "intensity": 0.6087,
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -47.32,
-      "peak_dbfs": -20.82,
-      "silence_ratio": 0.1125,
-      "estimated_intensity": 0.05
+      "rms_dbfs": -16.53,
+      "peak_dbfs": -10.93,
+      "silence_ratio": 0.2,
+      "estimated_intensity": 0.6087
+    }
+  },
+  {
+    "asset_id": "phone_vibrate_-002",
+    "path": "phone_vibrate/phone_vibrate_-002.wav",
+    "event_type": "phone_vibrate",
+    "duration_ms": 1827,
+    "tags": [
+      "phone",
+      "indoor",
+      "buzz",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.5251,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -19.47,
+      "peak_dbfs": -13.25,
+      "silence_ratio": 0.1579,
+      "estimated_intensity": 0.5251
+    }
+  },
+  {
+    "asset_id": "phone_vibrate_-003",
+    "path": "phone_vibrate/phone_vibrate_-003.wav",
+    "event_type": "phone_vibrate",
+    "duration_ms": 1976,
+    "tags": [
+      "phone",
+      "indoor",
+      "buzz",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.6087,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -16.53,
+      "peak_dbfs": -10.94,
+      "silence_ratio": 0.2,
+      "estimated_intensity": 0.6087
+    }
+  },
+  {
+    "asset_id": "phone_vibrate_-004",
+    "path": "phone_vibrate/phone_vibrate_-004.wav",
+    "event_type": "phone_vibrate",
+    "duration_ms": 2163,
+    "tags": [
+      "phone",
+      "indoor",
+      "buzz",
+      "object",
+      "foreground"
+    ],
+    "intensity": 0.4705,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -20.21,
+      "peak_dbfs": -13.26,
+      "silence_ratio": 0.2727,
+      "estimated_intensity": 0.4705
     }
   },
   {
@@ -3094,10 +3739,10 @@
     }
   },
   {
-    "asset_id": "237117__ondrosik__quiet-session-talk",
-    "path": "room_tone/237117__ondrosik__quiet-session-talk.flac",
+    "asset_id": "room_tone001",
+    "path": "room_tone/room_tone001.wav",
     "event_type": "room_tone",
-    "duration_ms": 240654,
+    "duration_ms": 189118,
     "tags": [
       "room",
       "indoor",
@@ -3105,21 +3750,21 @@
       "ambience",
       "background"
     ],
-    "intensity": 0.5477,
+    "intensity": 0.05,
     "sample_rate": 44100,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -33.27,
-      "peak_dbfs": -0.0,
-      "silence_ratio": 0.0004,
-      "estimated_intensity": 0.5477
+      "rms_dbfs": -55.89,
+      "peak_dbfs": -38.41,
+      "silence_ratio": 0.7553,
+      "estimated_intensity": 0.05
     }
   },
   {
-    "asset_id": "728166__leauronz__room-tone-kcb-tuning-classical-orchestra",
-    "path": "room_tone/728166__leauronz__room-tone-kcb-tuning-classical-orchestra.wav",
+    "asset_id": "room_tone002",
+    "path": "room_tone/room_tone002.wav",
     "event_type": "room_tone",
-    "duration_ms": 169168,
+    "duration_ms": 157880,
     "tags": [
       "room",
       "indoor",
@@ -3127,14 +3772,102 @@
       "ambience",
       "background"
     ],
-    "intensity": 0.6778,
+    "intensity": 0.05,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -48.03,
+      "peak_dbfs": -18.76,
+      "silence_ratio": 0.0361,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "room_tone003",
+    "path": "room_tone/room_tone003.wav",
+    "event_type": "room_tone",
+    "duration_ms": 53677,
+    "tags": [
+      "room",
+      "indoor",
+      "ambience",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -44.79,
+      "peak_dbfs": -24.75,
+      "silence_ratio": 0.0019,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "room_tone004",
+    "path": "room_tone/room_tone004.wav",
+    "event_type": "room_tone",
+    "duration_ms": 58368,
+    "tags": [
+      "room",
+      "indoor",
+      "ambience",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.0983,
     "sample_rate": 96000,
     "channels": 2,
     "analysis": {
-      "rms_dbfs": -25.97,
-      "peak_dbfs": -0.67,
+      "rms_dbfs": -39.94,
+      "peak_dbfs": -20.57,
       "silence_ratio": 0.0,
-      "estimated_intensity": 0.6778
+      "estimated_intensity": 0.0983
+    }
+  },
+  {
+    "asset_id": "room_tone005",
+    "path": "room_tone/room_tone005.mp3",
+    "event_type": "room_tone",
+    "duration_ms": 59690,
+    "tags": [
+      "room",
+      "indoor",
+      "ambience",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.05,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -42.78,
+      "peak_dbfs": -31.05,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "room_tone006",
+    "path": "room_tone/room_tone006.mp3",
+    "event_type": "room_tone",
+    "duration_ms": 54570,
+    "tags": [
+      "room",
+      "indoor",
+      "ambience",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.0742,
+    "sample_rate": 44100,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -41.18,
+      "peak_dbfs": -26.58,
+      "silence_ratio": 0.0,
+      "estimated_intensity": 0.0742
     }
   },
   {
@@ -3318,63 +4051,106 @@
     }
   },
   {
-    "asset_id": "sigh_001",
-    "path": "sigh/sigh_001.mp3",
+    "asset_id": "HUMAN-SIGH-FEMALE1",
+    "path": "sigh/HUMAN-SIGH-FEMALE1.wav",
     "event_type": "sigh",
-    "duration_ms": 1855,
+    "duration_ms": 3344,
     "tags": [
       "breath",
       "vocal_reaction",
       "foreground"
     ],
-    "intensity": 0.5164,
+    "intensity": 0.5511,
     "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -22.21,
+      "peak_dbfs": -2.64,
+      "silence_ratio": 0.4706,
+      "estimated_intensity": 0.5511
+    }
+  },
+  {
+    "asset_id": "HUMAN-SIGH-FEMALE2",
+    "path": "sigh/HUMAN-SIGH-FEMALE2.wav",
+    "event_type": "sigh",
+    "duration_ms": 3840,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.5516,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -22.14,
+      "peak_dbfs": -3.37,
+      "silence_ratio": 0.4359,
+      "estimated_intensity": 0.5516
+    }
+  },
+  {
+    "asset_id": "HUMAN-SIGH-MALE1",
+    "path": "sigh/HUMAN-SIGH-MALE1.wav",
+    "event_type": "sigh",
+    "duration_ms": 2279,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.4563,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -21.68,
+      "peak_dbfs": -5.84,
+      "silence_ratio": 0.6087,
+      "estimated_intensity": 0.4563
+    }
+  },
+  {
+    "asset_id": "HUMAN-SIGH-MALE2",
+    "path": "sigh/HUMAN-SIGH-MALE2.wav",
+    "event_type": "sigh",
+    "duration_ms": 2024,
+    "tags": [
+      "breath",
+      "vocal_reaction",
+      "foreground"
+    ],
+    "intensity": 0.496,
+    "sample_rate": 44100,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -24.71,
+      "peak_dbfs": -1.97,
+      "silence_ratio": 0.5238,
+      "estimated_intensity": 0.496
+    }
+  },
+  {
+    "asset_id": "station_crowd_001",
+    "path": "station_crowd/station_crowd_001.mp3",
+    "event_type": "station_crowd",
+    "duration_ms": 22104,
+    "tags": [
+      "subway",
+      "station",
+      "crowd",
+      "commute",
+      "ambience",
+      "background"
+    ],
+    "intensity": 0.7614,
+    "sample_rate": 48000,
     "channels": 1,
     "analysis": {
-      "rms_dbfs": -26.24,
-      "peak_dbfs": -9.45,
-      "silence_ratio": 0.0,
-      "estimated_intensity": 0.5164
-    }
-  },
-  {
-    "asset_id": "sigh_002",
-    "path": "sigh/sigh_002.mp3",
-    "event_type": "sigh",
-    "duration_ms": 3912,
-    "tags": [
-      "breath",
-      "vocal_reaction",
-      "foreground"
-    ],
-    "intensity": 0.6517,
-    "sample_rate": 24000,
-    "channels": 2,
-    "analysis": {
-      "rms_dbfs": -26.26,
-      "peak_dbfs": -1.32,
-      "silence_ratio": 0.025,
-      "estimated_intensity": 0.6517
-    }
-  },
-  {
-    "asset_id": "sigh_003",
-    "path": "sigh/sigh_003.mp3",
-    "event_type": "sigh",
-    "duration_ms": 13416,
-    "tags": [
-      "breath",
-      "vocal_reaction",
-      "foreground"
-    ],
-    "intensity": 0.2377,
-    "sample_rate": 48000,
-    "channels": 2,
-    "analysis": {
-      "rms_dbfs": -30.04,
-      "peak_dbfs": -11.35,
-      "silence_ratio": 0.4889,
-      "estimated_intensity": 0.2377
+      "rms_dbfs": -20.69,
+      "peak_dbfs": -1.64,
+      "silence_ratio": 0.0045,
+      "estimated_intensity": 0.7614
     }
   },
   {
@@ -3506,6 +4282,75 @@
       "peak_dbfs": -26.9,
       "silence_ratio": 0.0,
       "estimated_intensity": 0.05
+    }
+  },
+  {
+    "asset_id": "ticket_gate_beep_001",
+    "path": "ticket_gate_beep/ticket_gate_beep_001.wav",
+    "event_type": "ticket_gate_beep",
+    "duration_ms": 23791,
+    "tags": [
+      "subway",
+      "station",
+      "beep",
+      "gate",
+      "signal",
+      "foreground"
+    ],
+    "intensity": 0.7241,
+    "sample_rate": 8000,
+    "channels": 1,
+    "analysis": {
+      "rms_dbfs": -22.84,
+      "peak_dbfs": -0.0,
+      "silence_ratio": 0.0756,
+      "estimated_intensity": 0.7241
+    }
+  },
+  {
+    "asset_id": "train_arrive_001",
+    "path": "train_arrive/train_arrive_001.mp3",
+    "event_type": "train_arrive",
+    "duration_ms": 6960,
+    "tags": [
+      "subway",
+      "train",
+      "platform",
+      "arrival",
+      "vehicle",
+      "background"
+    ],
+    "intensity": 0.8548,
+    "sample_rate": 24000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -15.26,
+      "peak_dbfs": -0.73,
+      "silence_ratio": 0.0857,
+      "estimated_intensity": 0.8548
+    }
+  },
+  {
+    "asset_id": "audiopapkin-manual-platform-trolley-movesuneven-surface-320666",
+    "path": "trolley_roll/audiopapkin-manual-platform-trolley-movesuneven-surface-320666.mp3",
+    "event_type": "trolley_roll",
+    "duration_ms": 17376,
+    "tags": [
+      "hospital",
+      "cart",
+      "wheel",
+      "corridor",
+      "movement",
+      "foreground"
+    ],
+    "intensity": 0.8403,
+    "sample_rate": 48000,
+    "channels": 2,
+    "analysis": {
+      "rms_dbfs": -17.08,
+      "peak_dbfs": 0.0,
+      "silence_ratio": 0.0632,
+      "estimated_intensity": 0.8403
     }
   },
   {

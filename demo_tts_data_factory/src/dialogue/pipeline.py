@@ -42,8 +42,18 @@ class DialogueMixPipeline:
         )
 
     def run(self, audio_path: str | Path | None = None) -> list[dict]:
-        source_audio = self._resolve_audio(audio_path)
-        self.logger.info("Dialogue source audio: %s", source_audio)
+        source_audios = self._resolve_audio_paths(audio_path)
+        self.logger.info("Dialogue source audio files: %s", [str(path) for path in source_audios])
+        manifests: list[dict] = []
+        for source_audio in source_audios:
+            manifests.extend(self._run_single(source_audio))
+
+        listening_path = self.project_root / self.config.output_dir / "dialogue_listening_manifest.json"
+        write_json(listening_path, manifests)
+        return manifests
+
+    def _run_single(self, source_audio: Path) -> list[dict]:
+        self.logger.info("Processing dialogue source audio: %s", source_audio)
 
         analysis_audio = load_audio(source_audio, self.config.sample_rate, self.config.channels)
         duration_ms = len(analysis_audio)
@@ -57,20 +67,96 @@ class DialogueMixPipeline:
             transcript["duration_ms"] = duration_ms
         self.logger.info("ASR transcript: %s", transcript.get("text", ""))
 
+        manifests: list[dict] = []
+        scene_mode = self.config.dialogue_audio.scene_mode
+        if scene_mode in {"all", "all_templates"}:
+            target_scenes = self._resolve_scenes()
+            self.logger.info(
+                "Rendering dialogue source audio across all scene templates: %s",
+                target_scenes,
+            )
+            for scene in target_scenes:
+                plan = self._plan_for_scene(
+                    transcript=transcript,
+                    pauses=pauses,
+                    energy_peaks=energy_peaks,
+                    duration_ms=duration_ms,
+                    forced_scene=scene,
+                )
+                manifests.extend(
+                    self._render_scene_variants(
+                        source_audio=source_audio,
+                        analysis_audio=analysis_audio,
+                        duration_ms=duration_ms,
+                        transcript=transcript,
+                        pauses=pauses,
+                        energy_peaks=energy_peaks,
+                        plan=plan,
+                        scene=scene,
+                    )
+                )
+            return manifests
+
+        forced_scene = None
+        if scene_mode in {"config", "fixed", "manual"}:
+            forced_scene = self._safe_scene(self.config.scene)
+
+        plan = self._plan_for_scene(
+            transcript=transcript,
+            pauses=pauses,
+            energy_peaks=energy_peaks,
+            duration_ms=duration_ms,
+            forced_scene=forced_scene,
+        )
+        scene = self._resolve_scene(plan.get("scene"))
+        manifests.extend(
+            self._render_scene_variants(
+                source_audio=source_audio,
+                analysis_audio=analysis_audio,
+                duration_ms=duration_ms,
+                transcript=transcript,
+                pauses=pauses,
+                energy_peaks=energy_peaks,
+                plan=plan,
+                scene=scene,
+            )
+        )
+        return manifests
+
+    def _plan_for_scene(
+        self,
+        transcript: dict,
+        pauses: list[dict],
+        energy_peaks: list[dict],
+        duration_ms: int,
+        forced_scene: str | None = None,
+    ) -> dict:
         plan = plan_dialogue_script(
             transcript=transcript,
             pauses=pauses,
             energy_peaks=energy_peaks,
             audio_duration_ms=duration_ms,
             config=self.config.dialogue_audio.planner,
+            forced_scene=forced_scene,
         )
-        self.logger.info("Dialogue LLM plan: %s", plan)
+        self.logger.info("Dialogue LLM plan for scene %s: %s", forced_scene or "auto", plan)
+        return plan
 
-        scene = self._resolve_scene(plan.get("scene"))
-        emotion = str(plan.get("emotion") or "tense")
+    def _render_scene_variants(
+        self,
+        source_audio: Path,
+        analysis_audio,
+        duration_ms: int,
+        transcript: dict,
+        pauses: list[dict],
+        energy_peaks: list[dict],
+        plan: dict,
+        scene: str,
+    ) -> list[dict]:
+        emotion = self._resolve_emotion(plan.get("emotion"))
         scene_template = self.template_store.get(scene)
         base_timeline = self._timeline_from_plan(plan, duration_ms, scene_template)
-        base_case_id = self._case_id(source_audio)
+        base_case_id = self._case_id(source_audio, scene)
         manifests: list[dict] = []
 
         for variant in self._variant_names():
@@ -134,6 +220,9 @@ class DialogueMixPipeline:
                 "variant_params": variant_profile,
                 "scene": scene,
                 "emotion": emotion,
+                "planner_scene": plan.get("scene"),
+                "scene_mode": self.config.dialogue_audio.scene_mode,
+                "emotion_mode": self.config.dialogue_audio.emotion_mode,
                 "asr_transcript": transcript.get("text", ""),
                 "asr_segments": transcript.get("segments", []),
                 "detected_pauses": pauses,
@@ -178,19 +267,18 @@ class DialogueMixPipeline:
                 }
             )
             self.logger.info("Exported dialogue case: %s", metadata["output_files"])
-
-        listening_path = self.project_root / self.config.output_dir / "dialogue_listening_manifest.json"
-        write_json(listening_path, manifests)
         return manifests
 
-    def _resolve_audio(self, override_path: str | Path | None) -> Path:
+    def _resolve_audio_paths(self, override_path: str | Path | None) -> list[Path]:
         if override_path:
             path = Path(override_path)
-            return path if path.is_absolute() else (self.project_root / path).resolve()
+            resolved = path if path.is_absolute() else (self.project_root / path).resolve()
+            return [resolved]
         configured = self.config.dialogue_audio.audio_path
         if configured:
             path = Path(configured)
-            return path if path.is_absolute() else (self.project_root / path).resolve()
+            resolved = path if path.is_absolute() else (self.project_root / path).resolve()
+            return [resolved]
         input_dir = (self.project_root / self.config.dialogue_audio.input_dir).resolve()
         extensions = {item.lower() for item in self.config.dialogue_audio.allowed_audio_extensions}
         candidates = [
@@ -198,7 +286,7 @@ class DialogueMixPipeline:
         ]
         if not candidates:
             raise FileNotFoundError(f"No dialogue audio found in: {input_dir}")
-        return max(candidates, key=lambda path: path.stat().st_mtime)
+        return sorted(candidates, key=lambda path: (path.name.lower(), path.stat().st_mtime))
 
     def _timeline_from_plan(self, plan: dict, duration_ms: int, scene_template) -> list[TimelineEvent]:
         timeline: list[TimelineEvent] = []
@@ -312,11 +400,19 @@ class DialogueMixPipeline:
         if "sunny" in scene:
             tags.update({"sunny", "daytime", "dry"})
         if "cafe" in scene:
-            tags.update({"crowd", "indoor"})
+            tags.update({"cafe", "coffee", "crowd", "indoor"})
         if "restaurant" in scene:
             tags.update({"restaurant", "crowd", "indoor", "table", "kitchen"})
         if "indoor" in scene or "office" in scene:
             tags.update({"indoor", "room"})
+        if "office" in scene:
+            tags.update({"office", "desk"})
+        if "library" in scene:
+            tags.update({"library", "study", "quiet", "indoor"})
+        if "factory" in scene or "workshop" in scene:
+            tags.update({"industrial", "factory", "machine", "indoor"})
+        if "exercise" in scene:
+            tags.update({"exercise", "rest", "indoor", "room"})
         return tags
 
     def _script_text(
@@ -360,6 +456,20 @@ class DialogueMixPipeline:
             return self._safe_scene(self.config.scene)
         return self._safe_scene(planned_scene)
 
+    def _resolve_scenes(self) -> list[str]:
+        scene_mode = self.config.dialogue_audio.scene_mode
+        if scene_mode in {"all", "all_templates"}:
+            return self.template_store.names()
+        if scene_mode in {"config", "fixed", "manual"}:
+            return [self._safe_scene(self.config.scene)]
+        return []
+
+    def _resolve_emotion(self, planned_emotion: object) -> str:
+        emotion_mode = self.config.dialogue_audio.emotion_mode
+        if emotion_mode in {"config", "fixed", "manual"}:
+            return str(self.config.emotion or "tense")
+        return str(planned_emotion or "tense")
+
     def _safe_scene(self, scene: object) -> str:
         try:
             self.template_store.get(str(scene))
@@ -367,10 +477,11 @@ class DialogueMixPipeline:
         except Exception:
             return "rainy_street_chat"
 
-    def _case_id(self, source_audio: Path) -> str:
+    def _case_id(self, source_audio: Path, scene: str) -> str:
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         safe_stem = "".join(ch if ch.isalnum() or ch in {"_", "-"} else "_" for ch in source_audio.stem)
-        return f"dialogue_{stamp}_{safe_stem[:40]}"
+        safe_scene = "".join(ch if ch.isalnum() or ch in {"_", "-"} else "_" for ch in scene)
+        return f"dialogue_{stamp}_{safe_stem[:24]}_{safe_scene[:24]}"
 
     def _clone_timeline(self, timeline: list[TimelineEvent]) -> list[TimelineEvent]:
         return [

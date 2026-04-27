@@ -4,46 +4,70 @@ indoor_argument:
     - cloth_rustle
     - chair_move
     - door_close_hard
+    - footsteps_indoor
+    - phone_vibrate
     - sigh
     - breath_heavy
   allowed_background_events:
-    - crowd_murmur
-  default_background_events: []
+    - room_tone
+    - air_conditioner_hum
+  default_background_events:
+    - room_tone
   max_foreground_events: 5
-  max_total_events: 7
+  max_total_events: 8
   max_strong_events: 2
   overlap_policy:
     foreground_can_overlap_speech: true
     background_can_overlap_speech: true
   emotion_bias:
+    neutral:
+      room_tone: 0.4
+      cloth_rustle: 0.3
     angry:
       cup_hit: 1.0
       chair_move: 0.8
       breath_heavy: 0.7
+      door_close_hard: 0.7
     sad:
       sigh: 1.0
       cloth_rustle: 0.7
+    tense:
+      phone_vibrate: 0.5
+      footsteps_indoor: 0.4
   event_density_level: medium
 
 office_talk:
   allowed_foreground_events:
     - cloth_rustle
     - chair_move
+    - paper_rustle
+    - keyboard_typing
+    - phone_vibrate
     - sigh
   allowed_background_events:
-    - crowd_murmur
-  default_background_events: []
+    - room_tone
+    - air_conditioner_hum
+    - fluorescent_light_hum
+  default_background_events:
+    - room_tone
+    - air_conditioner_hum
   max_foreground_events: 3
-  max_total_events: 4
+  max_total_events: 6
   max_strong_events: 1
   overlap_policy:
     foreground_can_overlap_speech: true
     background_can_overlap_speech: true
   emotion_bias:
     neutral:
-      cloth_rustle: 0.6
+      keyboard_typing: 0.5
+      paper_rustle: 0.4
+      room_tone: 0.4
+    tense:
+      phone_vibrate: 0.6
+      chair_move: 0.4
     tired:
       sigh: 1.0
+      air_conditioner_hum: 0.5
   event_density_level: low
 
 indoor_room_chat:
@@ -163,7 +187,6 @@ rainy_street_chat:
   default_background_events:
     - rain_light
     - street_noise
-    - crowd_murmur
     - wind_light
   max_foreground_events: 6
   max_total_events: 12
@@ -172,12 +195,18 @@ rainy_street_chat:
     foreground_can_overlap_speech: true
     background_can_overlap_speech: true
   emotion_bias:
+    neutral:
+      rain_light: 0.6
+      street_noise: 0.4
     angry:
       footsteps_fast: 0.8
       breath_heavy: 0.8
       horn_short: 0.5
       car_passby_wet: 0.4
       puddle_step: 0.4
+    tense:
+      wind_light: 0.4
+      cloth_rustle: 0.4
     sad:
       sigh: 1.0
       rain_light: 0.8
@@ -189,6 +218,7 @@ sunny_street_chat:
     - bicycle_bell
     - horn_short
     - shop_door_chime
+    - footsteps_fast
     - sigh
   allowed_background_events:
     - street_noise
@@ -232,12 +262,19 @@ cafe_chat:
     - cloth_rustle
     - chair_move
     - sigh
+    - espresso_machine
+    - coffee_grinder
+    - milk_steam
+    - pour_water
+    - glass_clink
   allowed_background_events:
     - crowd_murmur
+    - room_tone
   default_background_events:
     - crowd_murmur
+    - room_tone
   max_foreground_events: 3
-  max_total_events: 5
+  max_total_events: 7
   max_strong_events: 1
   overlap_policy:
     foreground_can_overlap_speech: true
@@ -246,6 +283,135 @@ cafe_chat:
     neutral:
       crowd_murmur: 0.6
       cloth_rustle: 0.5
+      espresso_machine: 0.4
+      milk_steam: 0.4
+      pour_water: 0.3
+    tense:
+      coffee_grinder: 0.4
+      chair_move: 0.4
     angry:
       cup_hit: 0.9
+    tired:
+      room_tone: 0.5
+      milk_steam: 0.3
+  event_density_level: low
+
+library_study_chat:
+  allowed_foreground_events:
+    - cloth_rustle
+    - chair_move
+    - sigh
+    - paper_rustle
+    - book_page_turn
+    - pen_write
+    - phone_vibrate
+    - footsteps_indoor
+    - light_switch_click
+  allowed_background_events:
+    - library_room_tone
+    - room_tone
+    - air_conditioner_hum
+    - fluorescent_light_hum
+  default_background_events:
+    - library_room_tone
+    - air_conditioner_hum
+  max_foreground_events: 5
+  max_total_events: 9
+  max_strong_events: 1
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      library_room_tone: 0.6
+      book_page_turn: 0.4
+      pen_write: 0.4
+    tense:
+      phone_vibrate: 0.7
+      footsteps_indoor: 0.4
+      light_switch_click: 0.3
+    tired:
+      air_conditioner_hum: 0.5
+      sigh: 0.6
+    sad:
+      library_room_tone: 0.5
+      paper_rustle: 0.4
+  event_density_level: low
+
+factory_workshop_chat:
+  allowed_foreground_events:
+    - cloth_rustle
+    - footsteps_indoor
+    - breath_heavy
+    - door_close_hard
+    - footsteps_fast
+    - chair_move
+  allowed_background_events:
+    - air_conditioner_hum
+    - distant_construction
+    - fluorescent_light_hum
+  default_background_events:
+    - air_conditioner_hum
+    - fluorescent_light_hum
+  max_foreground_events: 5
+  max_total_events: 10
+  max_strong_events: 2
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      air_conditioner_hum: 0.5
+      fluorescent_light_hum: 0.5
+      distant_construction: 0.4
+    tense:
+      footsteps_indoor: 0.4
+      footsteps_fast: 0.4
+      door_close_hard: 0.5
+    angry:
+      distant_construction: 0.5
+      door_close_hard: 0.4
+    tired:
+      air_conditioner_hum: 0.5
+      fluorescent_light_hum: 0.4
+      breath_heavy: 0.5
+  event_density_level: low
+
+after_exercise_chat:
+  allowed_foreground_events:
+    - breath_heavy
+    - sigh
+    - cloth_rustle
+    - footsteps_indoor
+    - chair_move
+    - pour_water
+    - phone_vibrate
+  allowed_background_events:
+    - room_tone
+    - air_conditioner_hum
+    - crowd_murmur
+    - wind_light
+  default_background_events:
+    - room_tone
+    - air_conditioner_hum
+  max_foreground_events: 5
+  max_total_events: 9
+  max_strong_events: 1
+  overlap_policy:
+    foreground_can_overlap_speech: true
+    background_can_overlap_speech: true
+  emotion_bias:
+    neutral:
+      room_tone: 0.5
+      cloth_rustle: 0.4
+    tense:
+      phone_vibrate: 0.5
+      chair_move: 0.4
+    tired:
+      breath_heavy: 0.6
+      sigh: 0.5
+      air_conditioner_hum: 0.4
+    sad:
+      room_tone: 0.4
+      sigh: 0.5
   event_density_level: low

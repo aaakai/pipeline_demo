@@ -18,6 +18,9 @@ class SceneTemplateStore:
             raise FileNotFoundError(f"Scene template file not found: {self.template_path}")
         self.templates = self._load_templates()
 
+    def names(self) -> list[str]:
+        return list(self.templates.keys())
+
     def get(self, scene: str) -> SceneTemplate:
         if scene in self.templates:
             return self.templates[scene]

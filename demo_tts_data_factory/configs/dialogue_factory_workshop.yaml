@@ -1,0 +1,136 @@
+input_mode: single
+text: ""
+scene: factory_workshop_chat
+emotion: tense
+allowed_events:
+  - cup_hit
+  - cloth_rustle
+  - chair_move
+  - door_close_hard
+  - door_knock
+  - footsteps_fast
+  - footsteps_indoor
+  - sigh
+  - breath_heavy
+  - room_tone
+  - air_conditioner_hum
+  - fluorescent_light_hum
+  - paper_rustle
+  - menu_page_turn
+  - keyboard_typing
+  - phone_vibrate
+  - light_switch_click
+  - library_room_tone
+  - book_page_turn
+  - pen_write
+  - station_crowd
+  - train_arrive
+  - metro_announcement
+  - ticket_gate_beep
+  - hospital_ambience
+  - medical_monitor_beep
+  - trolley_roll
+  - espresso_machine
+  - coffee_grinder
+  - milk_steam
+  - machine_hum
+  - metal_clank
+  - hydraulic_hiss
+  - restaurant_murmur
+  - cutlery_clink
+  - plate_set_down
+  - glass_clink
+  - pour_water
+  - kitchen_clatter
+  - service_bell
+  - rain_light
+  - street_noise
+  - crowd_murmur
+  - car_passby_wet
+  - car_passby_dry
+  - horn_short
+  - bus_arrive
+  - puddle_step
+  - bicycle_bell
+  - bird_chirp
+  - crosswalk_beep
+  - shop_door_chime
+  - distant_construction
+  - wind_light
+clean_voice_path:
+sfx_manifest_path: assets/sfx/manifest.json
+sample_rate: 24000
+channels: 1
+output_dir: output
+batch_input_path: examples/demo_inputs.jsonl
+scene_templates_path: configs/scene_templates.yaml
+enhancer: rule_based
+tts_provider: mock
+dialogue_audio:
+  input_dir: input
+  audio_path:
+  allowed_audio_extensions: [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
+  scene_mode: config
+  emotion_mode: auto
+  anchor_method: asr_segments_plus_pause
+  asr:
+    api_key_env: OPENAI_API_KEY
+    base_url: https://api.openai.com/v1
+    model: whisper-1
+    language: zh
+    timeout_seconds: 180
+  planner:
+    api_key_env: OPENAI_API_KEY
+    base_url: https://api.openai.com/v1
+    model: gpt-4o-mini
+    temperature: 0.2
+    timeout_seconds: 90
+llm_enhancer:
+  api_key_env: OPENAI_API_KEY
+  base_url: https://api.openai.com/v1
+  model: gpt-4o-mini
+  temperature: 0.2
+openai_tts:
+  api_key_env: OPENAI_API_KEY
+  base_url: https://api.openai.com/v1
+  model: gpt-4o-mini-tts
+  voice: coral
+  response_format: wav
+  speed: 1.0
+mix:
+  speech_gain_db: 0.0
+  default_ducking_db: -3.0
+  fade_ms: 20
+  background_gain_db: -17.0
+merge:
+  enabled: true
+  same_event_gap_ms: 350
+  cloth_rustle_merge_gap_ms: 700
+style:
+  enable_keyword_style: true
+  enable_brief_style: true
+asset_scan:
+  audio_extensions: [".wav", ".mp3", ".flac"]
+  auto_intensity: true
+  preserve_manual_overrides: true
+asset_selection:
+  strategy: weighted_top_k
+  top_k: 3
+  avoid_recent: true
+  recent_window: 6
+background_scheduler:
+  enabled: true
+  max_background_layers: 4
+  max_accent_events: 5
+  min_gap_ms: 3000
+  random_offset_ms: 1200
+loudness:
+  enabled: true
+  target_speech_peak_dbfs: -3.0
+  max_mix_peak_dbfs: -1.0
+  background_headroom_db: 14.0
+  max_loudness_compensation_db: 6.0
+variants:
+  enabled: true
+  names: [subtle, balanced, cinematic]
+random_seed: 42

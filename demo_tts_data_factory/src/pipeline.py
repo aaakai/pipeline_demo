@@ -371,9 +371,21 @@ class DemoPipeline:
         if "rain" in scene:
             tags.update({"rain", "weather", "wet"})
         if "cafe" in scene:
-            tags.update({"crowd", "indoor"})
+            tags.update({"cafe", "coffee", "crowd", "indoor"})
         if "indoor" in scene or "office" in scene:
             tags.update({"indoor"})
+        if "office" in scene:
+            tags.update({"office", "desk", "room"})
+        if "restaurant" in scene:
+            tags.update({"restaurant", "crowd", "table", "kitchen", "indoor"})
+        if "sunny" in scene:
+            tags.update({"sunny", "daytime", "dry"})
+        if "library" in scene:
+            tags.update({"library", "study", "quiet", "indoor"})
+        if "factory" in scene or "workshop" in scene:
+            tags.update({"industrial", "factory", "machine", "indoor"})
+        if "exercise" in scene:
+            tags.update({"exercise", "rest", "indoor", "room"})
         return tags
 
 

@@ -18,7 +18,11 @@ class SfxMatcher:
         self.recent_asset_ids: deque[str] = deque(maxlen=max(1, config.recent_window))
 
     def match(self, event: TimelineEvent, scene_tags: set[str] | None = None) -> tuple[SfxAsset, float, str] | None:
-        candidates = self.library.by_event_type(event.event_type)
+        candidates = [
+            asset
+            for asset in self.library.by_event_type(event.event_type)
+            if self.library.resolve_path(asset).exists()
+        ]
         self.rng.shuffle(candidates)
         if not candidates:
             return None
