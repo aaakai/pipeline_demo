@@ -281,12 +281,24 @@ class DialogueMixPipeline:
             return [resolved]
         input_dir = (self.project_root / self.config.dialogue_audio.input_dir).resolve()
         extensions = {item.lower() for item in self.config.dialogue_audio.allowed_audio_extensions}
+        if not input_dir.exists():
+            raise FileNotFoundError(f"Dialogue input directory not found: {input_dir}")
         candidates = [
-            path for path in input_dir.glob("*") if path.is_file() and path.suffix.lower() in extensions
+            path
+            for path in input_dir.rglob("*")
+            if path.is_file() and path.suffix.lower() in extensions
         ]
         if not candidates:
-            raise FileNotFoundError(f"No dialogue audio found in: {input_dir}")
-        return sorted(candidates, key=lambda path: (path.name.lower(), path.stat().st_mtime))
+            raise FileNotFoundError(
+                f"No dialogue audio found recursively in: {input_dir}"
+            )
+        return sorted(
+            candidates,
+            key=lambda path: (
+                str(path.relative_to(input_dir)).lower(),
+                path.stat().st_mtime,
+            ),
+        )
 
     def _timeline_from_plan(self, plan: dict, duration_ms: int, scene_template) -> list[TimelineEvent]:
         timeline: list[TimelineEvent] = []
@@ -479,7 +491,13 @@ class DialogueMixPipeline:
 
     def _case_id(self, source_audio: Path, scene: str) -> str:
         stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        safe_stem = "".join(ch if ch.isalnum() or ch in {"_", "-"} else "_" for ch in source_audio.stem)
+        input_root = (self.project_root / self.config.dialogue_audio.input_dir).resolve()
+        try:
+            relative_source = source_audio.resolve().relative_to(input_root)
+            source_key = relative_source.with_suffix("").as_posix()
+        except ValueError:
+            source_key = source_audio.stem
+        safe_stem = "".join(ch if ch.isalnum() or ch in {"_", "-"} else "_" for ch in source_key)
         safe_scene = "".join(ch if ch.isalnum() or ch in {"_", "-"} else "_" for ch in scene)
         return f"dialogue_{stamp}_{safe_stem[:24]}_{safe_scene[:24]}"
 
