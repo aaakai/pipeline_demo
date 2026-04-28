@@ -135,6 +135,11 @@ def fetch_sfx_event_dir(
     if not config.source_uri:
         raise ValueError("SFX TOS is enabled but source_uri is empty.")
 
+    cached_event_dir = local_cache_dir / event_dir_name
+    if _has_cached_audio_files(cached_event_dir):
+        logger.info("Reusing cached SFX directory without TOS fetch: %s", cached_event_dir)
+        return cached_event_dir
+
     target_dir = ensure_dir(local_cache_dir)
     remote_uri = _join_tos_uri(config.source_uri, event_dir_name)
     util_path = Path(config.util_path).expanduser()
@@ -253,6 +258,16 @@ def _split_tos_uri(uri: str) -> tuple[str, str]:
 
 def _join_tos_uri(base_uri: str, suffix: str) -> str:
     return base_uri.rstrip("/") + "/" + suffix.strip("/")
+
+
+def _has_cached_audio_files(path: Path) -> bool:
+    if not path.exists() or not path.is_dir():
+        return False
+    audio_extensions = {".wav", ".mp3", ".flac", ".m4a", ".aac", ".ogg"}
+    return any(
+        child.is_file() and child.suffix.lower() in audio_extensions
+        for child in path.rglob("*")
+    )
 
 
 def _run_tos_command(
