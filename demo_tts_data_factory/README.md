@@ -184,6 +184,19 @@ tos_input:
 这样 `mix-dialogue` 在扫描本地 `input/` 之前，会先把 TOS 里的音频拉到这个目录；跑完后再继续沿用现有的 `tos_sync` 把结果传回 TOS。
 当前实现会优先使用逐文件流式模式：先列出 `source_uri` 下的对象，再按单个音频文件依次下载、本地处理、上传结果、删除本地输入文件，而不是整批全部拉完再处理。
 
+如果素材也放在 TOS，可以再打开：
+
+```yaml
+sfx_tos:
+  enabled: true
+  util_path: ~/tosutil
+  source_uri: tos://modeldata/sfx/
+  local_cache_dir: .cache/sfx_tos
+```
+
+这时系统仍然读取本地 `assets/sfx/manifest.json` 做素材匹配，但具体音频文件会在第一次命中某个事件类型时，按目录从 TOS 拉到本地缓存。
+例如场景需要 `cup_hit`，就会去拉 `tos://.../cup_hit/`，需要 `room_tone`，就会去拉 `tos://.../room_tone/`。
+
 也可以显式指定音频：
 
 ```bash

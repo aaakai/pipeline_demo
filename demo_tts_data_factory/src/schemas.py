@@ -201,6 +201,16 @@ class TOSInputConfig:
 
 
 @dataclass
+class SFXTOSConfig:
+    enabled: bool = False
+    util_path: str = "~/tosutil"
+    source_uri: str = ""
+    local_cache_dir: str = ".cache/sfx_tos"
+    recursive: bool = True
+    fail_on_error: bool = True
+
+
+@dataclass
 class SceneTemplate:
     name: str
     allowed_foreground_events: list[str]
@@ -302,6 +312,7 @@ class AppConfig:
     loudness: LoudnessConfig
     variants: VariantsConfig
     tos_input: TOSInputConfig
+    sfx_tos: SFXTOSConfig
     tos_sync: TOSSyncConfig
     random_seed: int | None = None
 

@@ -21,6 +21,7 @@ from src.schemas import (
     OpenAIASRConfig,
     MixConfig,
     OpenAITTSConfig,
+    SFXTOSConfig,
     StyleConfig,
     TOSInputConfig,
     TOSSyncConfig,
@@ -64,6 +65,7 @@ def load_config(config_path: str | Path) -> AppConfig:
     loudness_data = data.get("loudness") or {}
     variants_data = data.get("variants") or {}
     tos_input_data = data.get("tos_input") or {}
+    sfx_tos_data = data.get("sfx_tos") or {}
     tos_sync_data = data.get("tos_sync") or {}
     llm_enhancer_data = data.get("llm_enhancer") or {}
     openai_tts_data = data.get("openai_tts") or {}
@@ -185,6 +187,14 @@ def load_config(config_path: str | Path) -> AppConfig:
             recursive=bool(tos_input_data.get("recursive", True)),
             fail_on_error=bool(tos_input_data.get("fail_on_error", True)),
             clean_before_download=bool(tos_input_data.get("clean_before_download", False)),
+        ),
+        sfx_tos=SFXTOSConfig(
+            enabled=bool(sfx_tos_data.get("enabled", False)),
+            util_path=sfx_tos_data.get("util_path", "~/tosutil"),
+            source_uri=sfx_tos_data.get("source_uri", ""),
+            local_cache_dir=sfx_tos_data.get("local_cache_dir", ".cache/sfx_tos"),
+            recursive=bool(sfx_tos_data.get("recursive", True)),
+            fail_on_error=bool(sfx_tos_data.get("fail_on_error", True)),
         ),
         tos_sync=TOSSyncConfig(
             enabled=bool(tos_sync_data.get("enabled", False)),

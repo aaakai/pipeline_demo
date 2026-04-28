@@ -39,7 +39,11 @@ class DialogueMixPipeline:
         self.rng = random.Random(config.random_seed)
         self.logger = setup_logger(project_root / config.output_dir / "dialogue_pipeline.log")
         self.template_store = SceneTemplateStore(config.scene_templates_path, project_root)
-        self.library = SfxLibrary(config.sfx_manifest_path, project_root)
+        self.library = SfxLibrary(
+            config.sfx_manifest_path,
+            project_root,
+            sfx_tos=config.sfx_tos,
+        )
         self.matcher = SfxMatcher(self.library, self.rng, config.asset_selection)
         self.merger = EventMerger(config.merge)
         self.background_scheduler = BackgroundScheduler(config.background_scheduler, self.rng)

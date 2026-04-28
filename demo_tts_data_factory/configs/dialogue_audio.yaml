@@ -141,6 +141,13 @@ tos_input:
   recursive: true
   fail_on_error: true
   clean_before_download: false
+sfx_tos:
+  enabled: true
+  util_path: ~/tosutil
+  source_uri: tos://modeldata/sfx/
+  local_cache_dir: .cache/sfx_tos
+  recursive: true
+  fail_on_error: true
 tos_sync:
   enabled: true
   util_path: ~/tosutil
