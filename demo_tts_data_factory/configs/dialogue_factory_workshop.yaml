@@ -133,6 +133,13 @@ loudness:
 variants:
   enabled: true
   names: [subtle, balanced, cinematic]
+tos_input:
+  enabled: false
+  util_path: ~/tosutil
+  source_uri: tos://modeldata/input/
+  recursive: true
+  fail_on_error: true
+  clean_before_download: false
 tos_sync:
   enabled: true
   util_path: ~/tosutil

@@ -23,7 +23,13 @@ from src.sfx.matcher import SfxMatcher
 from src.sfx.taxonomy import TAXONOMY
 from src.audio.mix_engine import MixEngine
 from src.utils.files import ensure_dir, write_json
-from src.utils.tos import sync_case_dir
+from src.utils.tos import (
+    clear_local_input_dir,
+    fetch_input_object,
+    list_input_objects,
+    remote_uri_to_relative_path,
+    sync_case_dir,
+)
 
 
 class DialogueMixPipeline:
@@ -45,6 +51,11 @@ class DialogueMixPipeline:
         )
 
     def run(self, audio_path: str | Path | None = None) -> list[dict]:
+        if audio_path is None and self.config.tos_input.enabled:
+            manifests = self._run_from_tos_stream()
+            listening_path = self.project_root / self.config.output_dir / "dialogue_listening_manifest.json"
+            write_json(listening_path, manifests)
+            return manifests
         source_audios = self._resolve_audio_paths(audio_path)
         self.logger.info("Dialogue source audio files: %s", [str(path) for path in source_audios])
         manifests: list[dict] = []
@@ -54,6 +65,49 @@ class DialogueMixPipeline:
         listening_path = self.project_root / self.config.output_dir / "dialogue_listening_manifest.json"
         write_json(listening_path, manifests)
         return manifests
+
+    def _run_from_tos_stream(self) -> list[dict]:
+        input_dir = (self.project_root / self.config.dialogue_audio.input_dir).resolve()
+        if self.config.tos_input.clean_before_download:
+            clear_local_input_dir(input_dir)
+
+        allowed_extensions = {
+            item.lower() for item in self.config.dialogue_audio.allowed_audio_extensions
+        }
+        remote_uris = list_input_objects(
+            self.config.tos_input,
+            self.logger,
+            allowed_extensions=allowed_extensions,
+        )
+        if not remote_uris:
+            raise FileNotFoundError(
+                f"No dialogue audio found in TOS source: {self.config.tos_input.source_uri}"
+            )
+
+        manifests: list[dict] = []
+        for remote_uri in remote_uris:
+            relative_path = remote_uri_to_relative_path(remote_uri, self.config.tos_input.source_uri)
+            local_path = input_dir / relative_path
+            self.logger.info("Streaming TOS input object for processing: %s -> %s", remote_uri, local_path)
+            fetch_input_object(remote_uri, local_path, self.config.tos_input, self.logger)
+            try:
+                manifests.extend(self._run_single(local_path))
+            finally:
+                self._cleanup_streamed_input(local_path, input_dir)
+        return manifests
+
+    def _cleanup_streamed_input(self, local_path: Path, input_root: Path) -> None:
+        try:
+            if local_path.exists():
+                local_path.unlink()
+        finally:
+            current = local_path.parent
+            while current != input_root and current.exists():
+                try:
+                    current.rmdir()
+                except OSError:
+                    break
+                current = current.parent
 
     def _run_single(self, source_audio: Path) -> list[dict]:
         self.logger.info("Processing dialogue source audio: %s", source_audio)

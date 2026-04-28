@@ -167,6 +167,23 @@ python -m src.main mix-dialogue --config configs/dialogue_audio.yaml
 因此每条输入音频都会对 `configs/scene_templates.yaml` 中的每个场景模板各产出一组结果。
 如果有 3 条音频、10 个场景模板、3 个 variants，就会生成 `3 x 10 x 3 = 90` 个输出目录。
 
+如果想让输入也直接从 TOS 拉取，可以在配置里打开：
+
+```yaml
+dialogue_audio:
+  input_dir: input
+
+tos_input:
+  enabled: true
+  util_path: ~/tosutil
+  source_uri: tos://modeldata/input/
+  recursive: true
+  clean_before_download: false
+```
+
+这样 `mix-dialogue` 在扫描本地 `input/` 之前，会先把 TOS 里的音频拉到这个目录；跑完后再继续沿用现有的 `tos_sync` 把结果传回 TOS。
+当前实现会优先使用逐文件流式模式：先列出 `source_uri` 下的对象，再按单个音频文件依次下载、本地处理、上传结果、删除本地输入文件，而不是整批全部拉完再处理。
+
 也可以显式指定音频：
 
 ```bash

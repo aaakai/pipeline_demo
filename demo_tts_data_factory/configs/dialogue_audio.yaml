@@ -133,7 +133,14 @@ loudness:
   max_loudness_compensation_db: 7.0
 variants:
   enabled: true
-  names: [subtle, balanced, cinematic]
+  names: [cinematic]
+tos_input:
+  enabled: true
+  util_path: ~/tosutil
+  source_uri: tos://modeldata/quinn_audios_full_1211/quinn_audios_full/Adrian_processed/A Night In/
+  recursive: true
+  fail_on_error: true
+  clean_before_download: false
 tos_sync:
   enabled: true
   util_path: ~/tosutil
