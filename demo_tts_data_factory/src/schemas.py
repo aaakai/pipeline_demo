@@ -247,6 +247,7 @@ class DialogueAudioConfig:
     allowed_audio_extensions: list[str] = field(
         default_factory=lambda: [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
     )
+    min_duration_seconds: float = 10.0
     scene_mode: str = "auto"
     emotion_mode: str = "auto"
     anchor_method: str = "asr_segments_plus_pause"

@@ -104,6 +104,7 @@ def load_config(config_path: str | Path) -> AppConfig:
                 dialogue_audio_data.get("allowed_audio_extensions")
                 or [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
             ),
+            min_duration_seconds=float(dialogue_audio_data.get("min_duration_seconds", 10.0)),
             scene_mode=dialogue_audio_data.get("scene_mode", "auto"),
             emotion_mode=dialogue_audio_data.get("emotion_mode", "auto"),
             anchor_method=dialogue_audio_data.get("anchor_method", "asr_segments_plus_pause"),
