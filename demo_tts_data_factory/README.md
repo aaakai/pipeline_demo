@@ -69,6 +69,18 @@ python -m src.main scan-assets --config configs/demo.yaml
 
 扫描器会读取音频时长、采样率、声道数、RMS、峰值和静音比例，并估算 `intensity`。估算值只是初始值，适合快速造数；如果某条素材听感强弱和估算不一致，可以后续用 `assets/sfx/manifest_overrides.yaml` 做人工覆盖。
 
+如果素材库已经迁到 TOS，也可以在需要时直接同步并重建 manifest，而不用手动先下载：
+
+```bash
+python -m src.main sync-sfx-manifest --config configs/dialogue_audio.yaml
+```
+
+这条命令会：
+
+- 从 `sfx_tos.source_uri` 列出素材对象
+- 下载到本地缓存目录 `sfx_tos.local_cache_dir/_manifest_sync`
+- 重新分析音频并覆盖 `assets/sfx/manifest.json`
+
 ## 场景模板
 
 场景模板在：

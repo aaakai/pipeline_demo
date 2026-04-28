@@ -7,9 +7,10 @@ from pathlib import Path
 import typer
 
 from src.config import load_config
+from src.logger import setup_logger
 from src.dialogue.pipeline import run_dialogue_from_config
 from src.pipeline import run_from_config
-from src.sfx.manifest_builder import build_manifest
+from src.sfx.manifest_builder import build_manifest, sync_and_build_manifest_from_tos
 
 app = typer.Typer(help="Generate demo TTS data with SFX timeline mixing.")
 
@@ -45,6 +46,26 @@ def scan_assets(
         config=app_config.asset_scan,
     )
     typer.echo(f"Wrote {len(records)} asset record(s): {manifest_path}")
+
+
+@app.command("sync-sfx-manifest")
+def sync_sfx_manifest(
+    config: str = typer.Option("configs/dialogue_audio.yaml", "--config", help="Path to YAML config."),
+) -> None:
+    config_path = Path(config).expanduser().resolve()
+    project_root = config_path.parents[1]
+    app_config = load_config(config_path)
+    manifest_path = (project_root / app_config.sfx_manifest_path).resolve()
+    logger = setup_logger(project_root / app_config.output_dir / "sfx_manifest_sync.log")
+    records, sync_root = sync_and_build_manifest_from_tos(
+        project_root=project_root,
+        manifest_path=manifest_path,
+        tos_config=app_config.sfx_tos,
+        scan_config=app_config.asset_scan,
+        logger=logger,
+    )
+    typer.echo(f"Wrote {len(records)} asset record(s): {manifest_path}")
+    typer.echo(f"SFX sync cache: {sync_root}")
 
 
 @app.command("mix-dialogue")

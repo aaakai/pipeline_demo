@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 import json
+import shutil
+from logging import Logger
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 from src.audio.analyze import analyze_audio
-from src.schemas import AssetScanConfig
+from src.schemas import AssetScanConfig, SFXTOSConfig
 from src.sfx.taxonomy import TAXONOMY
-from src.utils.files import write_json
+from src.utils.files import ensure_dir, write_json
+from src.utils.tos import fetch_sfx_object, list_sfx_objects, remote_uri_to_relative_path
 
 
 def build_manifest(
@@ -61,6 +64,48 @@ def build_manifest(
     return records
 
 
+def sync_and_build_manifest_from_tos(
+    project_root: Path,
+    manifest_path: str | Path,
+    tos_config: SFXTOSConfig,
+    scan_config: AssetScanConfig,
+    logger: Logger,
+) -> tuple[list[dict[str, Any]], Path]:
+    if not tos_config.enabled:
+        raise ValueError("sfx_tos.enabled must be true to sync manifest from TOS.")
+
+    sync_root = ensure_dir((project_root / tos_config.local_cache_dir / "_manifest_sync").resolve())
+    if sync_root.exists():
+        shutil.rmtree(sync_root)
+    sync_root.mkdir(parents=True, exist_ok=True)
+
+    allowed_names = {"manifest_overrides.yaml"}
+    remote_uris = list_sfx_objects(
+        tos_config,
+        logger,
+        allowed_extensions={item.lower() for item in scan_config.audio_extensions},
+        allowed_names=allowed_names,
+    )
+    if not remote_uris:
+        raise FileNotFoundError(f"No SFX objects found in TOS source: {tos_config.source_uri}")
+
+    for remote_uri in remote_uris:
+        relative_path = remote_uri_to_relative_path(remote_uri, tos_config.source_uri)
+        normalized_path = _normalize_sfx_relative_path(relative_path)
+        if normalized_path is None:
+            continue
+        fetch_sfx_object(remote_uri, sync_root / normalized_path, tos_config, logger)
+
+    manifest = Path(manifest_path)
+    resolved_manifest = manifest if manifest.is_absolute() else (project_root / manifest).resolve()
+    records = build_manifest(
+        sfx_dir=sync_root,
+        manifest_path=resolved_manifest,
+        config=scan_config,
+    )
+    return records, sync_root
+
+
 def _load_existing(manifest_path: Path) -> dict[str, dict[str, Any]]:
     if not manifest_path.exists():
         return {}
@@ -92,3 +137,15 @@ def _unique_asset_id(candidate: str, seen_ids: set[str]) -> str:
     unique = f"{safe}_{index}"
     seen_ids.add(unique)
     return unique
+
+
+def _normalize_sfx_relative_path(relative_path: Path) -> Path | None:
+    parts = list(relative_path.parts)
+    if not parts:
+        return None
+    if parts[-1] == "manifest_overrides.yaml":
+        return Path(parts[-1])
+    for index, part in enumerate(parts[:-1]):
+        if part in TAXONOMY:
+            return Path(*parts[index:])
+    return None

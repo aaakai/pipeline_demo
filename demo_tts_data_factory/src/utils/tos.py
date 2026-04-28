@@ -12,6 +12,41 @@ from src.schemas import SFXTOSConfig, TOSInputConfig, TOSSyncConfig
 from src.utils.files import ensure_dir
 
 
+def list_sfx_objects(
+    config: SFXTOSConfig,
+    logger: Logger,
+    allowed_extensions: set[str] | None = None,
+    allowed_names: set[str] | None = None,
+) -> list[str]:
+    if not config.enabled:
+        return []
+    if not config.source_uri:
+        raise ValueError("SFX TOS is enabled but source_uri is empty.")
+
+    util_path = Path(config.util_path).expanduser()
+    command = [str(util_path), "ls", config.source_uri]
+    completed = _run_tos_command(
+        command,
+        logger,
+        action=f"list TOS SFX objects under {config.source_uri}",
+        fail_on_error=config.fail_on_error,
+    )
+    if completed is None:
+        return []
+
+    object_uris = _parse_tos_ls_output(completed.stdout, config.source_uri)
+    if allowed_extensions or allowed_names:
+        lowered_extensions = {item.lower() for item in allowed_extensions or set()}
+        allowed_names = allowed_names or set()
+        object_uris = [
+            uri
+            for uri in object_uris
+            if Path(uri).suffix.lower() in lowered_extensions or Path(uri).name in allowed_names
+        ]
+    logger.info("Discovered %s SFX object(s) from TOS source %s", len(object_uris), config.source_uri)
+    return object_uris
+
+
 def list_input_objects(
     config: TOSInputConfig,
     logger: Logger,
@@ -64,6 +99,29 @@ def fetch_input_object(remote_uri: str, local_path: Path, config: TOSInputConfig
         logger.info("TOS input fetch completed for %s: %s", remote_uri, output)
     else:
         logger.info("TOS input fetch completed for %s", remote_uri)
+
+
+def fetch_sfx_object(remote_uri: str, local_path: Path, config: SFXTOSConfig, logger: Logger) -> None:
+    if not config.enabled:
+        return
+
+    ensure_dir(local_path.parent)
+    util_path = Path(config.util_path).expanduser()
+    command = [str(util_path), "cp", remote_uri, str(local_path)]
+    completed = _run_tos_command(
+        command,
+        logger,
+        action=f"fetch TOS SFX object {remote_uri}",
+        fail_on_error=config.fail_on_error,
+    )
+    if completed is None:
+        return
+
+    output = completed.stdout.strip()
+    if output:
+        logger.info("TOS SFX object fetch completed for %s: %s", remote_uri, output)
+    else:
+        logger.info("TOS SFX object fetch completed for %s", remote_uri)
 
 
 def fetch_sfx_event_dir(
