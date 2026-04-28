@@ -182,6 +182,15 @@ class VariantsConfig:
 
 
 @dataclass
+class TOSSyncConfig:
+    enabled: bool = False
+    util_path: str = "~/tosutil"
+    destination_uri: str = "tos://modeldata/output/"
+    recursive: bool = True
+    fail_on_error: bool = True
+
+
+@dataclass
 class SceneTemplate:
     name: str
     allowed_foreground_events: list[str]
@@ -282,6 +291,7 @@ class AppConfig:
     background_scheduler: BackgroundSchedulerConfig
     loudness: LoudnessConfig
     variants: VariantsConfig
+    tos_sync: TOSSyncConfig
     random_seed: int | None = None
 
 

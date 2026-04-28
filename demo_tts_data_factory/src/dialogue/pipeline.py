@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import random
+import shutil
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -20,7 +22,8 @@ from src.sfx.library import SfxLibrary
 from src.sfx.matcher import SfxMatcher
 from src.sfx.taxonomy import TAXONOMY
 from src.audio.mix_engine import MixEngine
-from src.utils.files import ensure_dir, write_json, write_text
+from src.utils.files import ensure_dir, write_json
+from src.utils.tos import sync_case_dir
 
 
 class DialogueMixPipeline:
@@ -172,12 +175,12 @@ class DialogueMixPipeline:
         for variant in self._variant_names():
             case_id = f"{base_case_id}_{variant}" if variant else base_case_id
             case_dir = ensure_dir(self.project_root / self.config.output_dir / case_id)
-            clean_path = case_dir / "clean_dialogue.wav"
+            for legacy_name in ("script.txt", "clean_speech.wav", "clean_dialogue.wav"):
+                legacy_path = case_dir / legacy_name
+                if legacy_path.exists():
+                    legacy_path.unlink()
             final_path = case_dir / "final_mix.wav"
-            script_path = case_dir / "script.txt"
             metadata_path = case_dir / "metadata.json"
-
-            export_wav(analysis_audio, clean_path)
             variant_profile = get_variant_profile(variant)
             timeline = self._clone_timeline(base_timeline)
             timeline = self._apply_variant_profile(timeline, variant_profile)
@@ -192,80 +195,20 @@ class DialogueMixPipeline:
             merged_timeline = self.merger.merge(scheduled_timeline)
             selected_timeline = self._select_assets(merged_timeline, self._scene_tags(scene, emotion))
             self._apply_loudness_compensation(selected_timeline)
+            temp_dir = Path(tempfile.mkdtemp(prefix="pipeline_demo_dialogue_"))
+            clean_path = temp_dir / "clean_dialogue.wav"
+            try:
+                export_wav(analysis_audio, clean_path)
+                self.mixer.mix(
+                    clean_speech_path=clean_path,
+                    timeline=selected_timeline,
+                    output_path=final_path,
+                    speech_gain_db=self.config.mix.speech_gain_db,
+                )
+            finally:
+                shutil.rmtree(temp_dir, ignore_errors=True)
 
-            script_text = self._script_text(
-                source_audio=source_audio,
-                scene=scene,
-                emotion=emotion,
-                transcript=transcript,
-                plan=plan,
-                timeline=selected_timeline,
-            )
-            write_text(script_path, script_text)
-            self.mixer.mix(
-                clean_speech_path=clean_path,
-                timeline=selected_timeline,
-                output_path=final_path,
-                speech_gain_db=self.config.mix.speech_gain_db,
-            )
-
-            selected_assets = [
-                {"event_type": item.event_type, "asset_id": item.asset_id, "asset_path": item.asset_path}
-                for item in selected_timeline
-                if item.asset_id
-            ]
-            skipped_events = [
-                {"event_type": item.event_type, "anchor_text": item.anchor_text, "reason": item.skipped_reason}
-                for item in selected_timeline
-                if item.skipped_reason
-            ]
-            metadata = {
-                "case_id": case_id,
-                "run_mode": "dialogue_audio_mix",
-                "input_audio": str(source_audio),
-                "audio_driven": True,
-                "anchor_method": self.config.dialogue_audio.anchor_method,
-                "dialogue_duration_ms": duration_ms,
-                "variant": variant or "default",
-                "variant_params": variant_profile,
-                "scene": scene,
-                "emotion": emotion,
-                "planner_scene": plan.get("scene"),
-                "scene_mode": self.config.dialogue_audio.scene_mode,
-                "emotion_mode": self.config.dialogue_audio.emotion_mode,
-                "asr_transcript": transcript.get("text", ""),
-                "asr_segments": transcript.get("segments", []),
-                "detected_pauses": pauses,
-                "energy_peaks": energy_peaks,
-                "llm_event_plan": plan,
-                "background_schedule": [
-                    to_dict(item)
-                    for item in scheduled_timeline
-                    if "background_scheduler" in item.source_event_ids
-                ],
-                "merged_events": [to_dict(item) for item in merged_timeline],
-                "selected_assets": selected_assets,
-                "asset_selection_trace": [
-                    {
-                        "event_id": item.event_id,
-                        "event_type": item.event_type,
-                        "asset_id": item.asset_id,
-                        "selection_score": item.selection_score,
-                        "selection_reason": item.selection_reason,
-                    }
-                    for item in selected_timeline
-                    if item.asset_id
-                ],
-                "skipped_events": skipped_events,
-                "event_timeline": [to_dict(item) for item in selected_timeline],
-                "mix_params": to_dict(self.config.mix),
-                "output_files": {
-                    "clean_dialogue": str(clean_path),
-                    "final_mix": str(final_path),
-                    "script": str(script_path),
-                    "metadata": str(metadata_path),
-                },
-            }
+            metadata = {"merged_events": [to_dict(item) for item in merged_timeline]}
             write_json(metadata_path, metadata)
             manifests.append(
                 {
@@ -276,7 +219,11 @@ class DialogueMixPipeline:
                     "emotion": emotion,
                 }
             )
-            self.logger.info("Exported dialogue case: %s", metadata["output_files"])
+            self.logger.info(
+                "Exported dialogue case: %s",
+                {"final_mix": str(final_path), "metadata": str(metadata_path)},
+            )
+            sync_case_dir(case_dir, self.config.tos_sync, self.logger)
         return manifests
 
     def _resolve_audio_paths(self, override_path: str | Path | None) -> list[Path]:

@@ -22,6 +22,7 @@ from src.schemas import (
     MixConfig,
     OpenAITTSConfig,
     StyleConfig,
+    TOSSyncConfig,
     VariantsConfig,
 )
 
@@ -61,6 +62,7 @@ def load_config(config_path: str | Path) -> AppConfig:
     background_scheduler_data = data.get("background_scheduler") or {}
     loudness_data = data.get("loudness") or {}
     variants_data = data.get("variants") or {}
+    tos_sync_data = data.get("tos_sync") or {}
     llm_enhancer_data = data.get("llm_enhancer") or {}
     openai_tts_data = data.get("openai_tts") or {}
     dialogue_audio_data = data.get("dialogue_audio") or {}
@@ -173,6 +175,13 @@ def load_config(config_path: str | Path) -> AppConfig:
         variants=VariantsConfig(
             enabled=bool(variants_data.get("enabled", False)),
             names=list(variants_data.get("names") or ["balanced"]),
+        ),
+        tos_sync=TOSSyncConfig(
+            enabled=bool(tos_sync_data.get("enabled", False)),
+            util_path=tos_sync_data.get("util_path", "~/tosutil"),
+            destination_uri=tos_sync_data.get("destination_uri", "tos://modeldata/output/"),
+            recursive=bool(tos_sync_data.get("recursive", True)),
+            fail_on_error=bool(tos_sync_data.get("fail_on_error", True)),
         ),
         random_seed=data.get("random_seed"),
     )

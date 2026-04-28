@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import json
 import random
-import shutil
 import hashlib
+import shutil
+import tempfile
 from dataclasses import replace
 from pathlib import Path
 
@@ -27,7 +28,8 @@ from src.tts.mock_tts import MockTTSProvider
 from src.tts.openai_tts import OpenAITTSProvider
 from src.audio.io import load_audio
 from src.audio.mix_engine import MixEngine
-from src.utils.files import ensure_dir, write_json, write_text
+from src.utils.files import ensure_dir, write_json
+from src.utils.tos import sync_case_dir
 from src.utils.text import make_case_id
 
 
@@ -83,6 +85,10 @@ class DemoPipeline:
         clean_source_path: Path | None = None,
     ) -> dict:
         case_dir = ensure_dir(self.project_root / self.config.output_dir / case.case_id)
+        for legacy_name in ("script.txt", "clean_speech.wav", "clean_dialogue.wav"):
+            legacy_path = case_dir / legacy_name
+            if legacy_path.exists():
+                legacy_path.unlink()
         self.logger.info("Running case %s", case.case_id)
         variant_profile = get_variant_profile(variant)
         scene_template = self.template_store.get(case.scene)
@@ -103,122 +109,71 @@ class DemoPipeline:
         )
         self.logger.info("Generated original events: %s", [to_dict(item) for item in planned_events])
 
-        style_views = self.style_controller.build(
-            plain_text=case.text,
-            scene=case.scene,
-            emotion=case.emotion,
-            events=planned_events,
-            config=self.config.style,
-        )
-
-        script_path = case_dir / "script.txt"
-        clean_path = case_dir / "clean_speech.wav"
         final_path = case_dir / "final_mix.wav"
         metadata_path = case_dir / "metadata.json"
-
-        write_text(script_path, style_views.script_text)
-        if plan_only:
-            speech_duration_ms = self._estimate_speech_duration_ms(case.text)
-        elif clean_source_path:
-            shutil.copyfile(clean_source_path, clean_path)
-            clean_audio = load_audio(clean_path, self.config.sample_rate, self.config.channels)
-            speech_duration_ms = len(clean_audio)
-        else:
-            self.tts.synthesize(case.text, clean_path)
-            clean_audio = load_audio(clean_path, self.config.sample_rate, self.config.channels)
-            speech_duration_ms = len(clean_audio)
-        original_timeline = self.anchor_mapper.map_events(
-            plain_text=case.text,
-            planned_events=planned_events,
-            speech_duration_ms=speech_duration_ms,
-            default_ducking_db=self.config.mix.default_ducking_db,
-            background_gain_db=self.config.mix.background_gain_db,
-        )
-        original_timeline = self._apply_variant_profile(original_timeline, variant_profile)
-        scheduled_timeline = self.background_scheduler.schedule(
-            timeline=original_timeline,
-            scene_template=scene_template,
-            speech_duration_ms=speech_duration_ms,
-            background_gain_db=self.config.mix.background_gain_db,
-            default_ducking_db=self.config.mix.default_ducking_db,
-            variant=variant,
-        )
-        merged_timeline = self.merger.merge(scheduled_timeline)
-        self.logger.info("Merged events: %s", [to_dict(item) for item in merged_timeline])
-        timeline = self._select_assets(merged_timeline, self._scene_tags(case.scene, case.emotion))
-        self._apply_loudness_compensation(timeline)
-        self.logger.info("Selected assets: %s", [to_dict(item) for item in timeline])
-        self.logger.info("Final event timeline: %s", [to_dict(item) for item in timeline])
-
-        if not plan_only:
-            self.mixer.mix(
-                clean_speech_path=clean_path,
-                timeline=timeline,
-                output_path=final_path,
-                speech_gain_db=self.config.mix.speech_gain_db,
+        temp_clean_path: Path | None = None
+        try:
+            if plan_only:
+                speech_duration_ms = self._estimate_speech_duration_ms(case.text)
+                mix_input_path: Path | None = None
+            elif clean_source_path:
+                clean_audio = load_audio(clean_source_path, self.config.sample_rate, self.config.channels)
+                speech_duration_ms = len(clean_audio)
+                mix_input_path = clean_source_path
+            else:
+                temp_dir = Path(tempfile.mkdtemp(prefix="pipeline_demo_clean_"))
+                temp_clean_path = temp_dir / "clean_speech.wav"
+                self.tts.synthesize(case.text, temp_clean_path)
+                clean_audio = load_audio(temp_clean_path, self.config.sample_rate, self.config.channels)
+                speech_duration_ms = len(clean_audio)
+                mix_input_path = temp_clean_path
+            original_timeline = self.anchor_mapper.map_events(
+                plain_text=case.text,
+                planned_events=planned_events,
+                speech_duration_ms=speech_duration_ms,
+                default_ducking_db=self.config.mix.default_ducking_db,
+                background_gain_db=self.config.mix.background_gain_db,
             )
+            original_timeline = self._apply_variant_profile(original_timeline, variant_profile)
+            scheduled_timeline = self.background_scheduler.schedule(
+                timeline=original_timeline,
+                scene_template=scene_template,
+                speech_duration_ms=speech_duration_ms,
+                background_gain_db=self.config.mix.background_gain_db,
+                default_ducking_db=self.config.mix.default_ducking_db,
+                variant=variant,
+            )
+            merged_timeline = self.merger.merge(scheduled_timeline)
+            self.logger.info("Merged events: %s", [to_dict(item) for item in merged_timeline])
+            timeline = self._select_assets(merged_timeline, self._scene_tags(case.scene, case.emotion))
+            self._apply_loudness_compensation(timeline)
+            self.logger.info("Selected assets: %s", [to_dict(item) for item in timeline])
+            self.logger.info("Final event timeline: %s", [to_dict(item) for item in timeline])
 
-        selected_assets = [
-            {"event_type": item.event_type, "asset_id": item.asset_id, "asset_path": item.asset_path}
-            for item in timeline
-            if item.asset_id
-        ]
-        skipped_events = [
-            {"event_type": item.event_type, "anchor_text": item.anchor_text, "reason": item.skipped_reason}
-            for item in timeline
-            if item.skipped_reason
-        ]
-        metadata = {
-            "case_id": case.case_id,
-            "plain_text": case.text,
-            "keyword_style": style_views.keyword_style,
-            "brief_style": style_views.brief_style,
-            "script_text": style_views.script_text,
-            "scene": case.scene,
-            "emotion": case.emotion,
-            "variant": variant or "default",
-            "variant_params": variant_profile,
-            "scene_template": to_dict(scene_template),
-            "enhancement_notes": enhancement.notes,
-            "original_events": [to_dict(item) for item in planned_events],
-            "merged_events": [to_dict(item) for item in merged_timeline],
-            "background_schedule": [
-                to_dict(item)
-                for item in scheduled_timeline
-                if "background_scheduler" in item.source_event_ids
-            ],
-            "selected_assets": selected_assets,
-            "asset_selection_trace": [
-                {
-                    "event_id": item.event_id,
-                    "event_type": item.event_type,
-                    "asset_id": item.asset_id,
-                    "selection_score": item.selection_score,
-                    "selection_reason": item.selection_reason,
-                }
-                for item in timeline
-                if item.asset_id
-            ],
-            "skipped_events": skipped_events,
-            "event_timeline": [to_dict(item) for item in timeline],
-            "mix_params": to_dict(self.config.mix),
-            "run_mode": "plan_only" if plan_only else "full_audio",
-            "estimated_speech_duration_ms": speech_duration_ms if plan_only else None,
-            "output_files": {
-                "clean_speech": None if plan_only else str(clean_path),
+            if not plan_only:
+                self.mixer.mix(
+                    clean_speech_path=mix_input_path,
+                    timeline=timeline,
+                    output_path=final_path,
+                    speech_gain_db=self.config.mix.speech_gain_db,
+                )
+
+            metadata = {"merged_events": [to_dict(item) for item in merged_timeline]}
+            write_json(metadata_path, metadata)
+            self.logger.info(
+                "Exported files: %s",
+                {"final_mix": None if plan_only else str(final_path), "metadata": str(metadata_path)},
+            )
+            sync_case_dir(case_dir, self.config.tos_sync, self.logger)
+            return {
+                "case_id": case.case_id,
+                "text": case.text,
                 "final_mix": None if plan_only else str(final_path),
-                "script": str(script_path),
                 "metadata": str(metadata_path),
-            },
-        }
-        write_json(metadata_path, metadata)
-        self.logger.info("Exported files: %s", metadata["output_files"])
-        return {
-            "case_id": case.case_id,
-            "text": case.text,
-            "final_mix": None if plan_only else str(final_path),
-            "metadata": str(metadata_path),
-        }
+            }
+        finally:
+            if temp_clean_path is not None:
+                shutil.rmtree(temp_clean_path.parent, ignore_errors=True)
 
     def _select_assets(self, timeline: list[TimelineEvent], scene_tags: set[str]) -> list[TimelineEvent]:
         for event in timeline:
@@ -291,7 +246,7 @@ class DemoPipeline:
         return max(8000, int(non_space_chars / 4.5 * 1000))
 
     def _prepare_shared_clean_speech(self, case: CaseInput) -> Path:
-        shared_dir = ensure_dir(self.project_root / self.config.output_dir / "_shared_clean_speech")
+        shared_dir = ensure_dir(Path(tempfile.gettempdir()) / "pipeline_demo_shared_clean_speech")
         digest = hashlib.sha1("".join(case.text.split()).encode("utf-8")).hexdigest()[:10]
         clean_path = shared_dir / f"{digest}.wav"
         if clean_path.exists():

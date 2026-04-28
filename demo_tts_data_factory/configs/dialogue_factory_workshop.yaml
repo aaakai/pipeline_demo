@@ -133,4 +133,10 @@ loudness:
 variants:
   enabled: true
   names: [subtle, balanced, cinematic]
+tos_sync:
+  enabled: true
+  util_path: ~/tosutil
+  destination_uri: tos://modeldata/output/
+  recursive: true
+  fail_on_error: true
 random_seed: 42
