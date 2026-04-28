@@ -9,8 +9,11 @@ allowed_events:
   - breath_heavy
   - door_close_hard
   - chair_move
+  - metal_clank
   - air_conditioner_hum
   - fluorescent_light_hum
+  - machine_hum
+  - hydraulic_hiss
   - distant_construction
 clean_voice_path:
 sfx_manifest_path: assets/sfx/manifest.json

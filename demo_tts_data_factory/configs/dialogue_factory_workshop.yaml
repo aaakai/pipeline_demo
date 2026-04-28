@@ -18,21 +18,19 @@ allowed_events:
   - paper_rustle
   - menu_page_turn
   - keyboard_typing
+  - mouse_click
   - phone_vibrate
   - light_switch_click
+  - bag_zip
+  - door_open_soft
+  - cup_set_down
   - library_room_tone
   - book_page_turn
   - pen_write
-  - station_crowd
-  - train_arrive
-  - metro_announcement
-  - ticket_gate_beep
-  - hospital_ambience
-  - medical_monitor_beep
-  - trolley_roll
   - espresso_machine
   - coffee_grinder
   - milk_steam
+  - printer_whirr
   - machine_hum
   - metal_clank
   - hydraulic_hiss
@@ -51,10 +49,12 @@ allowed_events:
   - horn_short
   - bus_arrive
   - puddle_step
+  - umbrella_rustle
   - bicycle_bell
   - bird_chirp
   - crosswalk_beep
   - shop_door_chime
+  - distant_siren
   - distant_construction
   - wind_light
 clean_voice_path:

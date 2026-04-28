@@ -42,6 +42,9 @@ office_talk:
     - chair_move
     - paper_rustle
     - keyboard_typing
+    - mouse_click
+    - printer_whirr
+    - bag_zip
     - phone_vibrate
     - sigh
   allowed_background_events:
@@ -60,11 +63,14 @@ office_talk:
   emotion_bias:
     neutral:
       keyboard_typing: 0.5
+      mouse_click: 0.4
+      printer_whirr: 0.4
       paper_rustle: 0.4
       room_tone: 0.4
     tense:
       phone_vibrate: 0.6
       chair_move: 0.4
+      bag_zip: 0.3
     tired:
       sigh: 1.0
       air_conditioner_hum: 0.5
@@ -77,11 +83,14 @@ indoor_room_chat:
     - cup_hit
     - door_knock
     - door_close_hard
+    - door_open_soft
     - footsteps_indoor
     - paper_rustle
     - keyboard_typing
+    - bag_zip
     - phone_vibrate
     - light_switch_click
+    - cup_set_down
     - sigh
     - breath_heavy
   allowed_background_events:
@@ -107,10 +116,12 @@ indoor_room_chat:
       phone_vibrate: 0.6
       door_knock: 0.5
       breath_heavy: 0.4
+      bag_zip: 0.3
     angry:
       door_close_hard: 0.8
       chair_move: 0.6
       cup_hit: 0.5
+      cup_set_down: 0.4
     tired:
       air_conditioner_hum: 0.5
       sigh: 0.6
@@ -118,6 +129,7 @@ indoor_room_chat:
       room_tone: 0.5
       sigh: 0.7
       cloth_rustle: 0.4
+      door_open_soft: 0.3
   event_density_level: medium
 
 restaurant_chat:
@@ -127,6 +139,7 @@ restaurant_chat:
     - cup_hit
     - cutlery_clink
     - plate_set_down
+    - cup_set_down
     - glass_clink
     - pour_water
     - menu_page_turn
@@ -152,6 +165,7 @@ restaurant_chat:
       restaurant_murmur: 0.5
       cutlery_clink: 0.4
       menu_page_turn: 0.3
+      cup_set_down: 0.3
     tense:
       glass_clink: 0.5
       phone_vibrate: 0.4
@@ -173,6 +187,7 @@ rainy_street_chat:
   allowed_foreground_events:
     - cloth_rustle
     - footsteps_fast
+    - umbrella_rustle
     - sigh
     - breath_heavy
     - horn_short
@@ -184,6 +199,7 @@ rainy_street_chat:
     - car_passby_wet
     - bus_arrive
     - wind_light
+    - distant_siren
   default_background_events:
     - rain_light
     - street_noise
@@ -207,6 +223,8 @@ rainy_street_chat:
     tense:
       wind_light: 0.4
       cloth_rustle: 0.4
+      distant_siren: 0.4
+      umbrella_rustle: 0.4
     sad:
       sigh: 1.0
       rain_light: 0.8
@@ -224,6 +242,7 @@ sunny_street_chat:
     - street_noise
     - crowd_murmur
     - car_passby_dry
+    - distant_siren
     - bus_arrive
     - bird_chirp
     - crosswalk_beep
@@ -248,6 +267,7 @@ sunny_street_chat:
       horn_short: 0.5
       car_passby_dry: 0.4
       crosswalk_beep: 0.3
+      distant_siren: 0.4
     angry:
       horn_short: 0.6
       bicycle_bell: 0.3
@@ -262,9 +282,11 @@ cafe_chat:
     - cloth_rustle
     - chair_move
     - sigh
+    - bag_zip
     - espresso_machine
     - coffee_grinder
     - milk_steam
+    - cup_set_down
     - pour_water
     - glass_clink
   allowed_background_events:
@@ -286,9 +308,11 @@ cafe_chat:
       espresso_machine: 0.4
       milk_steam: 0.4
       pour_water: 0.3
+      cup_set_down: 0.3
     tense:
       coffee_grinder: 0.4
       chair_move: 0.4
+      bag_zip: 0.3
     angry:
       cup_hit: 0.9
     tired:
@@ -304,6 +328,7 @@ library_study_chat:
     - paper_rustle
     - book_page_turn
     - pen_write
+    - bag_zip
     - phone_vibrate
     - footsteps_indoor
     - light_switch_click
@@ -330,6 +355,7 @@ library_study_chat:
       phone_vibrate: 0.7
       footsteps_indoor: 0.4
       light_switch_click: 0.3
+      bag_zip: 0.3
     tired:
       air_conditioner_hum: 0.5
       sigh: 0.6
@@ -346,12 +372,15 @@ factory_workshop_chat:
     - door_close_hard
     - footsteps_fast
     - chair_move
+    - metal_clank
   allowed_background_events:
     - air_conditioner_hum
     - distant_construction
     - fluorescent_light_hum
+    - machine_hum
+    - hydraulic_hiss
   default_background_events:
-    - air_conditioner_hum
+    - machine_hum
     - fluorescent_light_hum
   max_foreground_events: 5
   max_total_events: 10
@@ -361,18 +390,21 @@ factory_workshop_chat:
     background_can_overlap_speech: true
   emotion_bias:
     neutral:
-      air_conditioner_hum: 0.5
+      machine_hum: 0.6
       fluorescent_light_hum: 0.5
       distant_construction: 0.4
+      hydraulic_hiss: 0.3
     tense:
       footsteps_indoor: 0.4
       footsteps_fast: 0.4
       door_close_hard: 0.5
+      metal_clank: 0.5
     angry:
       distant_construction: 0.5
       door_close_hard: 0.4
+      metal_clank: 0.7
     tired:
-      air_conditioner_hum: 0.5
+      machine_hum: 0.5
       fluorescent_light_hum: 0.4
       breath_heavy: 0.5
   event_density_level: low
