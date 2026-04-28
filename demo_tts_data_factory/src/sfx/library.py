@@ -17,7 +17,7 @@ class SfxLibrary:
         self.assets = self._load_assets()
 
     def _load_assets(self) -> list[SfxAsset]:
-        records = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+        records = json.loads(self.manifest_path.read_text(encoding="utf-8-sig"))
         assets = [SfxAsset(**record) for record in records]
         return assets
 
