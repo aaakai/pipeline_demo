@@ -57,6 +57,16 @@ class DialogueMixPipeline:
 
         analysis_audio = load_audio(source_audio, self.config.sample_rate, self.config.channels)
         duration_ms = len(analysis_audio)
+        min_duration_ms = int(self.config.dialogue_audio.min_duration_seconds * 1000)
+        if duration_ms < min_duration_ms:
+            self.logger.info(
+                "Skipping short dialogue audio: %s (duration_ms=%s < min_duration_ms=%s)",
+                source_audio,
+                duration_ms,
+                min_duration_ms,
+            )
+            return []
+
         pauses = detect_pauses(source_audio)
         energy_peaks = detect_energy_peaks(source_audio)
         self.logger.info("Detected pauses: %s", pauses)
