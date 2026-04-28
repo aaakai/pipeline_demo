@@ -178,6 +178,7 @@ python -m src.main mix-dialogue --config configs/dialogue_audio.yaml
 当前 `configs/dialogue_audio.yaml` 默认使用 `dialogue_audio.scene_mode: all_templates`。
 因此每条输入音频都会对 `configs/scene_templates.yaml` 中的每个场景模板各产出一组结果。
 如果有 3 条音频、10 个场景模板、3 个 variants，就会生成 `3 x 10 x 3 = 90` 个输出目录。
+现在默认还会使用 `dialogue_audio.scene_parallel_workers: 10`，即单条输入音频拉取完成后，直接并行启动最多 10 个 scene worker 去同时生成不同场景的输出。
 
 如果想让输入也直接从 TOS 拉取，可以在配置里打开：
 

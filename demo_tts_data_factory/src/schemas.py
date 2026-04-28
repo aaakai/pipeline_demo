@@ -278,6 +278,7 @@ class DialogueAudioConfig:
     )
     min_duration_seconds: float = 10.0
     scene_mode: str = "auto"
+    scene_parallel_workers: int = 1
     emotion_mode: str = "auto"
     anchor_method: str = "asr_segments_plus_pause"
     asr: OpenAIASRConfig = field(default_factory=OpenAIASRConfig)

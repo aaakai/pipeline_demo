@@ -13,7 +13,7 @@ def setup_logger(log_path: Path | None = None) -> logging.Logger:
         handler.close()
         logger.removeHandler(handler)
 
-    formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
+    formatter = logging.Formatter("%(asctime)s [%(levelname)s] [%(threadName)s] %(message)s")
     stream_handler = logging.StreamHandler()
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)

@@ -112,6 +112,7 @@ def load_config(config_path: str | Path) -> AppConfig:
             ),
             min_duration_seconds=float(dialogue_audio_data.get("min_duration_seconds", 10.0)),
             scene_mode=dialogue_audio_data.get("scene_mode", "auto"),
+            scene_parallel_workers=int(dialogue_audio_data.get("scene_parallel_workers", 1)),
             emotion_mode=dialogue_audio_data.get("emotion_mode", "auto"),
             anchor_method=dialogue_audio_data.get("anchor_method", "asr_segments_plus_pause"),
             asr=OpenAIASRConfig(

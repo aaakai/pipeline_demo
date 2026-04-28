@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 from pathlib import Path
 
 from src.schemas import SFXTOSConfig, SfxAsset
@@ -29,6 +30,7 @@ class SfxLibrary:
             if self.sfx_tos.enabled
             else self.manifest_path.parent
         )
+        self._hydration_lock = threading.Lock()
         self._hydrated_event_types: set[str] = set()
         self.assets = self._load_assets()
 
@@ -49,18 +51,22 @@ class SfxLibrary:
         if not self.sfx_tos.enabled or event_type in self._hydrated_event_types:
             return
 
-        event_dir_names = sorted(
-            {
-                Path(asset.path).parts[0]
-                for asset in self.assets
-                if asset.event_type == event_type and Path(asset.path).parts
-            }
-        )
-        for event_dir_name in event_dir_names:
-            fetch_sfx_event_dir(
-                event_dir_name=event_dir_name,
-                local_cache_dir=self.base_dir,
-                config=self.sfx_tos,
-                logger=self.logger,
+        with self._hydration_lock:
+            if event_type in self._hydrated_event_types:
+                return
+
+            event_dir_names = sorted(
+                {
+                    Path(asset.path).parts[0]
+                    for asset in self.assets
+                    if asset.event_type == event_type and Path(asset.path).parts
+                }
             )
-        self._hydrated_event_types.add(event_type)
+            for event_dir_name in event_dir_names:
+                fetch_sfx_event_dir(
+                    event_dir_name=event_dir_name,
+                    local_cache_dir=self.base_dir,
+                    config=self.sfx_tos,
+                    logger=self.logger,
+                )
+            self._hydrated_event_types.add(event_type)

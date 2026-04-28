@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import hashlib
 import random
 import shutil
 import tempfile
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -37,7 +39,6 @@ class DialogueMixPipeline:
     def __init__(self, config: AppConfig, project_root: Path):
         self.config = config
         self.project_root = project_root
-        self.rng = random.Random(config.random_seed)
         self.logger = setup_logger(project_root / config.output_dir / "dialogue_pipeline.log")
         self.template_store = SceneTemplateStore(config.scene_templates_path, project_root)
         self.library = SfxLibrary(
@@ -45,9 +46,7 @@ class DialogueMixPipeline:
             project_root,
             sfx_tos=config.sfx_tos,
         )
-        self.matcher = SfxMatcher(self.library, self.rng, config.asset_selection)
         self.merger = EventMerger(config.merge)
-        self.background_scheduler = BackgroundScheduler(config.background_scheduler, self.rng)
         self.mixer = MixEngine(
             config.sample_rate,
             config.channels,
@@ -181,43 +180,17 @@ class DialogueMixPipeline:
                 "Rendering dialogue source audio across all scene templates: %s",
                 target_scenes,
             )
-            total_scenes = len(target_scenes)
-            for scene_index, scene in enumerate(target_scenes, start=1):
-                self.logger.info(
-                    "Starting scene %s/%s for %s: %s",
-                    scene_index,
-                    total_scenes,
-                    source_audio.name,
-                    scene,
-                )
-                scene_started_at = time.perf_counter()
-                plan = self._plan_for_scene(
+            manifests.extend(
+                self._run_scene_batch(
+                    source_audio=source_audio,
+                    analysis_audio=analysis_audio,
+                    duration_ms=duration_ms,
                     transcript=transcript,
                     pauses=pauses,
                     energy_peaks=energy_peaks,
-                    duration_ms=duration_ms,
-                    forced_scene=scene,
+                    target_scenes=target_scenes,
                 )
-                manifests.extend(
-                    self._render_scene_variants(
-                        source_audio=source_audio,
-                        analysis_audio=analysis_audio,
-                        duration_ms=duration_ms,
-                        transcript=transcript,
-                        pauses=pauses,
-                        energy_peaks=energy_peaks,
-                        plan=plan,
-                        scene=scene,
-                    )
-                )
-                self.logger.info(
-                    "Finished scene %s/%s for %s in %.2fs: %s",
-                    scene_index,
-                    total_scenes,
-                    source_audio.name,
-                    time.perf_counter() - scene_started_at,
-                    scene,
-                )
+            )
             self.logger.info(
                 "Finished dialogue source audio in %.2fs: %s",
                 time.perf_counter() - run_started_at,
@@ -237,6 +210,7 @@ class DialogueMixPipeline:
             forced_scene=forced_scene,
         )
         scene = self._resolve_scene(plan.get("scene"))
+        matcher, background_scheduler = self._build_scene_runtime(source_audio, scene)
         manifests.extend(
             self._render_scene_variants(
                 source_audio=source_audio,
@@ -247,6 +221,8 @@ class DialogueMixPipeline:
                 energy_peaks=energy_peaks,
                 plan=plan,
                 scene=scene,
+                matcher=matcher,
+                background_scheduler=background_scheduler,
             )
         )
         self.logger.info(
@@ -288,6 +264,120 @@ class DialogueMixPipeline:
         self.logger.info("Dialogue LLM plan for scene %s: %s", planner_label, plan)
         return plan
 
+    def _run_scene_batch(
+        self,
+        source_audio: Path,
+        analysis_audio,
+        duration_ms: int,
+        transcript: dict,
+        pauses: list[dict],
+        energy_peaks: list[dict],
+        target_scenes: list[str],
+    ) -> list[dict]:
+        total_scenes = len(target_scenes)
+        worker_count = self._scene_worker_count(total_scenes)
+        if worker_count <= 1:
+            manifests: list[dict] = []
+            for scene_index, scene in enumerate(target_scenes, start=1):
+                manifests.extend(
+                    self._run_scene(
+                        source_audio=source_audio,
+                        analysis_audio=analysis_audio,
+                        duration_ms=duration_ms,
+                        transcript=transcript,
+                        pauses=pauses,
+                        energy_peaks=energy_peaks,
+                        scene=scene,
+                        scene_index=scene_index,
+                        total_scenes=total_scenes,
+                    )
+                )
+            return manifests
+
+        self.logger.info(
+            "Starting parallel scene rendering for %s with %s worker(s)",
+            source_audio.name,
+            worker_count,
+        )
+        manifests_by_index: dict[int, list[dict]] = {}
+        with ThreadPoolExecutor(
+            max_workers=worker_count,
+            thread_name_prefix="scene-worker",
+        ) as executor:
+            future_map = {
+                executor.submit(
+                    self._run_scene,
+                    source_audio,
+                    analysis_audio,
+                    duration_ms,
+                    transcript,
+                    pauses,
+                    energy_peaks,
+                    scene,
+                    scene_index,
+                    total_scenes,
+                ): scene_index
+                for scene_index, scene in enumerate(target_scenes, start=1)
+            }
+            for future in as_completed(future_map):
+                scene_index = future_map[future]
+                manifests_by_index[scene_index] = future.result()
+
+        manifests: list[dict] = []
+        for scene_index in range(1, total_scenes + 1):
+            manifests.extend(manifests_by_index.get(scene_index, []))
+        return manifests
+
+    def _run_scene(
+        self,
+        source_audio: Path,
+        analysis_audio,
+        duration_ms: int,
+        transcript: dict,
+        pauses: list[dict],
+        energy_peaks: list[dict],
+        scene: str,
+        scene_index: int,
+        total_scenes: int,
+    ) -> list[dict]:
+        self.logger.info(
+            "Starting scene %s/%s for %s: %s",
+            scene_index,
+            total_scenes,
+            source_audio.name,
+            scene,
+        )
+        scene_started_at = time.perf_counter()
+        plan = self._plan_for_scene(
+            transcript=transcript,
+            pauses=pauses,
+            energy_peaks=energy_peaks,
+            duration_ms=duration_ms,
+            forced_scene=scene,
+        )
+        matcher, background_scheduler = self._build_scene_runtime(source_audio, scene)
+        manifests = self._render_scene_variants(
+            source_audio=source_audio,
+            analysis_audio=analysis_audio,
+            duration_ms=duration_ms,
+            transcript=transcript,
+            pauses=pauses,
+            energy_peaks=energy_peaks,
+            plan=plan,
+            scene=scene,
+            matcher=matcher,
+            background_scheduler=background_scheduler,
+        )
+        self.logger.info(
+            "Finished scene %s/%s for %s in %.2fs: %s",
+            scene_index,
+            total_scenes,
+            source_audio.name,
+            time.perf_counter() - scene_started_at,
+            scene,
+        )
+        return manifests
+
     def _render_scene_variants(
         self,
         source_audio: Path,
@@ -298,6 +388,8 @@ class DialogueMixPipeline:
         energy_peaks: list[dict],
         plan: dict,
         scene: str,
+        matcher: SfxMatcher,
+        background_scheduler: BackgroundScheduler,
     ) -> list[dict]:
         emotion = self._resolve_emotion(plan.get("emotion"))
         scene_template = self.template_store.get(scene)
@@ -317,7 +409,7 @@ class DialogueMixPipeline:
             variant_profile = get_variant_profile(variant)
             timeline = self._clone_timeline(base_timeline)
             timeline = self._apply_variant_profile(timeline, variant_profile)
-            scheduled_timeline = self.background_scheduler.schedule(
+            scheduled_timeline = background_scheduler.schedule(
                 timeline=timeline,
                 scene_template=scene_template,
                 speech_duration_ms=duration_ms,
@@ -326,7 +418,11 @@ class DialogueMixPipeline:
                 variant=variant,
             )
             merged_timeline = self.merger.merge(scheduled_timeline)
-            selected_timeline = self._select_assets(merged_timeline, self._scene_tags(scene, emotion))
+            selected_timeline = self._select_assets(
+                merged_timeline,
+                self._scene_tags(scene, emotion),
+                matcher,
+            )
             self._apply_loudness_compensation(selected_timeline)
             variant_label = variant or "default"
             selected_count = sum(1 for item in selected_timeline if item.asset_path)
@@ -452,9 +548,14 @@ class DialogueMixPipeline:
             )
         return sorted(timeline, key=lambda item: (item.start_ms, item.end_ms))
 
-    def _select_assets(self, timeline: list[TimelineEvent], scene_tags: set[str]) -> list[TimelineEvent]:
+    def _select_assets(
+        self,
+        timeline: list[TimelineEvent],
+        scene_tags: set[str],
+        matcher: SfxMatcher,
+    ) -> list[TimelineEvent]:
         for event in timeline:
-            result = self.matcher.match(event, scene_tags=scene_tags)
+            result = matcher.match(event, scene_tags=scene_tags)
             if result:
                 asset, score, reason = result
                 event.asset_id = asset.asset_id
@@ -574,6 +675,39 @@ class DialogueMixPipeline:
         if not self.config.variants.enabled:
             return [None]
         return [name for name in self.config.variants.names if name]
+
+    def _scene_worker_count(self, total_scenes: int) -> int:
+        configured = max(1, self.config.dialogue_audio.scene_parallel_workers)
+        return min(configured, max(1, total_scenes))
+
+    def _build_scene_runtime(
+        self,
+        source_audio: Path,
+        scene: str,
+    ) -> tuple[SfxMatcher, BackgroundScheduler]:
+        matcher_rng = self._make_seeded_rng(source_audio, scene, "matcher")
+        scheduler_rng = self._make_seeded_rng(source_audio, scene, "scheduler")
+        return (
+            SfxMatcher(self.library, matcher_rng, self.config.asset_selection),
+            BackgroundScheduler(self.config.background_scheduler, scheduler_rng),
+        )
+
+    def _make_seeded_rng(
+        self,
+        source_audio: Path,
+        scene: str,
+        scope: str,
+    ) -> random.Random:
+        seed_basis = "|".join(
+            [
+                str(self.config.random_seed or 0),
+                str(source_audio.resolve()),
+                scene,
+                scope,
+            ]
+        )
+        digest = hashlib.sha1(seed_basis.encode("utf-8")).hexdigest()
+        return random.Random(int(digest[:16], 16))
 
     def _resolve_scene(self, planned_scene: object) -> str:
         scene_mode = self.config.dialogue_audio.scene_mode

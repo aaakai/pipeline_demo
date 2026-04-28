@@ -72,6 +72,7 @@ dialogue_audio:
   allowed_audio_extensions: [".wav", ".mp3", ".m4a", ".flac", ".aac", ".ogg"]
   min_duration_seconds: 10
   scene_mode: all_templates
+  scene_parallel_workers: 10
   emotion_mode: auto
   anchor_method: asr_segments_plus_pause
   asr:
@@ -137,7 +138,7 @@ variants:
 tos_input:
   enabled: true
   util_path: ~/tosutil
-  source_uri: tos://modeldata/quinn_audios_full_1211/quinn_audios_full/Adrian_processed/A Night In/
+  source_uri: tos://modeldata/quinn_audios_full_1211/quinn_audios_full/Alice_processed/A Different Kind of Start/
   recursive: true
   fail_on_error: true
   clean_before_download: false
