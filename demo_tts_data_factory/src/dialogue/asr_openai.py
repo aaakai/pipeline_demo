@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import time
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,7 @@ def transcribe_audio(audio_path: str | Path, config: OpenAIASRConfig) -> dict[st
         raise FileNotFoundError(f"Dialogue audio not found: {path}")
 
     endpoint = config.base_url.rstrip("/") + "/audio/transcriptions"
+    request_started_at = time.perf_counter()
     with path.open("rb") as audio_file:
         files = {"file": (path.name, audio_file, _content_type(path))}
         data: dict[str, object] = {
@@ -40,7 +42,13 @@ def transcribe_audio(audio_path: str | Path, config: OpenAIASRConfig) -> dict[st
             f"ASR request failed with HTTP {response.status_code}: {response.text[:1000]}"
         )
     payload = response.json()
-    return _normalize_asr_payload(payload)
+    normalized = _normalize_asr_payload(payload)
+    normalized["_request_metrics"] = {
+        "elapsed_seconds": round(time.perf_counter() - request_started_at, 2),
+        "model": config.model,
+        "endpoint": endpoint,
+    }
+    return normalized
 
 
 def _normalize_asr_payload(payload: dict[str, Any]) -> dict[str, Any]:

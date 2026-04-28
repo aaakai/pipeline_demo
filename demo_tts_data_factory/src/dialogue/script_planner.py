@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from typing import Any
 
 import requests
@@ -47,6 +48,7 @@ def plan_dialogue_script(
         audio_duration_ms,
         forced_scene=forced_scene,
     )
+    request_started_at = time.perf_counter()
     response = requests.post(
         endpoint,
         headers={
@@ -79,7 +81,13 @@ def plan_dialogue_script(
         payload = json.loads(content)
     except json.JSONDecodeError as exc:
         raise RuntimeError(f"Dialogue planner returned invalid JSON: {content[:1000]}") from exc
-    return _sanitize_plan(payload, audio_duration_ms, forced_scene=forced_scene)
+    sanitized = _sanitize_plan(payload, audio_duration_ms, forced_scene=forced_scene)
+    sanitized["_request_metrics"] = {
+        "elapsed_seconds": round(time.perf_counter() - request_started_at, 2),
+        "model": config.model,
+        "endpoint": endpoint,
+    }
+    return sanitized
 
 
 def _build_prompt(

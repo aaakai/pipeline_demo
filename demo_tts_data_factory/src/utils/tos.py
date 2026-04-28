@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import shutil
 import subprocess
+import time
 from logging import Logger
 from pathlib import Path
 
@@ -276,15 +277,28 @@ def _run_tos_command(
     action: str,
     fail_on_error: bool,
 ) -> subprocess.CompletedProcess[str] | None:
+    started_at = time.perf_counter()
+    logger.info("Starting TOS command to %s: %s", action, " ".join(command))
     try:
-        return subprocess.run(
+        completed = subprocess.run(
             command,
             check=True,
             capture_output=True,
             text=True,
         )
+        logger.info(
+            "Finished TOS command for %s in %.2fs",
+            action,
+            time.perf_counter() - started_at,
+        )
+        return completed
     except subprocess.CalledProcessError as exc:
-        logger.error("TOS command failed while trying to %s: %s", action, exc.stderr.strip() or exc.stdout.strip())
+        logger.error(
+            "TOS command failed after %.2fs while trying to %s: %s",
+            time.perf_counter() - started_at,
+            action,
+            exc.stderr.strip() or exc.stdout.strip(),
+        )
         if fail_on_error:
             raise RuntimeError(f"Failed to {action}") from exc
         return None

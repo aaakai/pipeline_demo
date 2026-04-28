@@ -5,6 +5,7 @@ from __future__ import annotations
 import random
 import shutil
 import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -88,16 +89,36 @@ class DialogueMixPipeline:
                 f"No dialogue audio found in TOS source: {self.config.tos_input.source_uri}"
             )
 
+        self.logger.info(
+            "Starting TOS dialogue stream run for %s object(s) from %s",
+            len(remote_uris),
+            self.config.tos_input.source_uri,
+        )
         manifests: list[dict] = []
-        for remote_uri in remote_uris:
+        total_inputs = len(remote_uris)
+        for input_index, remote_uri in enumerate(remote_uris, start=1):
             relative_path = remote_uri_to_relative_path(remote_uri, self.config.tos_input.source_uri)
             local_path = input_dir / relative_path
-            self.logger.info("Streaming TOS input object for processing: %s -> %s", remote_uri, local_path)
+            self.logger.info(
+                "Starting input %s/%s from TOS: %s -> %s",
+                input_index,
+                total_inputs,
+                remote_uri,
+                local_path,
+            )
             fetch_input_object(remote_uri, local_path, self.config.tos_input, self.logger)
+            input_started_at = time.perf_counter()
             try:
                 manifests.extend(self._run_single(local_path))
             finally:
                 self._cleanup_streamed_input(local_path, input_dir)
+            self.logger.info(
+                "Finished input %s/%s in %.2fs: %s",
+                input_index,
+                total_inputs,
+                time.perf_counter() - input_started_at,
+                remote_uri,
+            )
         return manifests
 
     def _cleanup_streamed_input(self, local_path: Path, input_root: Path) -> None:
@@ -114,6 +135,7 @@ class DialogueMixPipeline:
                 current = current.parent
 
     def _run_single(self, source_audio: Path) -> list[dict]:
+        run_started_at = time.perf_counter()
         self.logger.info("Processing dialogue source audio: %s", source_audio)
 
         analysis_audio = load_audio(source_audio, self.config.sample_rate, self.config.channels)
@@ -133,9 +155,22 @@ class DialogueMixPipeline:
         self.logger.info("Detected pauses: %s", pauses)
         self.logger.info("Detected energy peaks: %s", energy_peaks)
 
+        self.logger.info(
+            "Starting ASR for %s (duration=%.2fs, model=%s)",
+            source_audio.name,
+            duration_ms / 1000,
+            self.config.dialogue_audio.asr.model,
+        )
         transcript = transcribe_audio(source_audio, self.config.dialogue_audio.asr)
         if not transcript.get("duration_ms"):
             transcript["duration_ms"] = duration_ms
+        asr_metrics = transcript.get("_request_metrics") or {}
+        self.logger.info(
+            "Finished ASR for %s in %.2fs (segments=%s)",
+            source_audio.name,
+            float(asr_metrics.get("elapsed_seconds", 0.0)),
+            len(transcript.get("segments") or []),
+        )
         self.logger.info("ASR transcript: %s", transcript.get("text", ""))
 
         manifests: list[dict] = []
@@ -146,7 +181,16 @@ class DialogueMixPipeline:
                 "Rendering dialogue source audio across all scene templates: %s",
                 target_scenes,
             )
-            for scene in target_scenes:
+            total_scenes = len(target_scenes)
+            for scene_index, scene in enumerate(target_scenes, start=1):
+                self.logger.info(
+                    "Starting scene %s/%s for %s: %s",
+                    scene_index,
+                    total_scenes,
+                    source_audio.name,
+                    scene,
+                )
+                scene_started_at = time.perf_counter()
                 plan = self._plan_for_scene(
                     transcript=transcript,
                     pauses=pauses,
@@ -166,6 +210,19 @@ class DialogueMixPipeline:
                         scene=scene,
                     )
                 )
+                self.logger.info(
+                    "Finished scene %s/%s for %s in %.2fs: %s",
+                    scene_index,
+                    total_scenes,
+                    source_audio.name,
+                    time.perf_counter() - scene_started_at,
+                    scene,
+                )
+            self.logger.info(
+                "Finished dialogue source audio in %.2fs: %s",
+                time.perf_counter() - run_started_at,
+                source_audio,
+            )
             return manifests
 
         forced_scene = None
@@ -192,6 +249,11 @@ class DialogueMixPipeline:
                 scene=scene,
             )
         )
+        self.logger.info(
+            "Finished dialogue source audio in %.2fs: %s",
+            time.perf_counter() - run_started_at,
+            source_audio,
+        )
         return manifests
 
     def _plan_for_scene(
@@ -202,6 +264,12 @@ class DialogueMixPipeline:
         duration_ms: int,
         forced_scene: str | None = None,
     ) -> dict:
+        planner_label = forced_scene or "auto"
+        self.logger.info(
+            "Starting dialogue planner for scene %s (model=%s)",
+            planner_label,
+            self.config.dialogue_audio.planner.model,
+        )
         plan = plan_dialogue_script(
             transcript=transcript,
             pauses=pauses,
@@ -210,7 +278,14 @@ class DialogueMixPipeline:
             config=self.config.dialogue_audio.planner,
             forced_scene=forced_scene,
         )
-        self.logger.info("Dialogue LLM plan for scene %s: %s", forced_scene or "auto", plan)
+        planner_metrics = plan.get("_request_metrics") or {}
+        self.logger.info(
+            "Finished dialogue planner for scene %s in %.2fs with %s event(s)",
+            planner_label,
+            float(planner_metrics.get("elapsed_seconds", 0.0)),
+            len(plan.get("events") or []),
+        )
+        self.logger.info("Dialogue LLM plan for scene %s: %s", planner_label, plan)
         return plan
 
     def _render_scene_variants(
@@ -253,15 +328,38 @@ class DialogueMixPipeline:
             merged_timeline = self.merger.merge(scheduled_timeline)
             selected_timeline = self._select_assets(merged_timeline, self._scene_tags(scene, emotion))
             self._apply_loudness_compensation(selected_timeline)
+            variant_label = variant or "default"
+            selected_count = sum(1 for item in selected_timeline if item.asset_path)
+            skipped_count = sum(1 for item in selected_timeline if not item.asset_path)
+            self.logger.info(
+                "Prepared timeline for case %s (scene=%s, variant=%s, events=%s, selected=%s, skipped=%s)",
+                case_id,
+                scene,
+                variant_label,
+                len(selected_timeline),
+                selected_count,
+                skipped_count,
+            )
             temp_dir = Path(tempfile.mkdtemp(prefix="pipeline_demo_dialogue_"))
             clean_path = temp_dir / "clean_dialogue.wav"
             try:
                 export_wav(analysis_audio, clean_path)
+                mix_started_at = time.perf_counter()
+                self.logger.info(
+                    "Starting mix for case %s -> %s",
+                    case_id,
+                    final_path,
+                )
                 self.mixer.mix(
                     clean_speech_path=clean_path,
                     timeline=selected_timeline,
                     output_path=final_path,
                     speech_gain_db=self.config.mix.speech_gain_db,
+                )
+                self.logger.info(
+                    "Finished mix for case %s in %.2fs",
+                    case_id,
+                    time.perf_counter() - mix_started_at,
                 )
             finally:
                 shutil.rmtree(temp_dir, ignore_errors=True)
