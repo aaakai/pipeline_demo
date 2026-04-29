@@ -49,32 +49,61 @@ def plan_dialogue_script(
         forced_scene=forced_scene,
     )
     request_started_at = time.perf_counter()
-    response = requests.post(
-        endpoint,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        },
-        json={
-            "model": config.model,
-            "temperature": config.temperature,
-            "response_format": {"type": "json_object"},
-            "messages": [
-                {
-                    "role": "system",
-                    "content": (
-                        "You are an audio-drama sound designer. Return only valid JSON. "
-                        "Use only allowed event types and avoid sound effects that would cover dialogue."
-                    ),
+    max_attempts = max(1, config.max_retries + 1)
+    attempt = 0
+    response: requests.Response | None = None
+    last_error: Exception | None = None
+    while attempt < max_attempts:
+        attempt += 1
+        try:
+            response = requests.post(
+                endpoint,
+                headers={
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json",
                 },
-                {"role": "user", "content": prompt},
-            ],
-        },
-        timeout=config.timeout_seconds,
-    )
-    if response.status_code >= 400:
+                json={
+                    "model": config.model,
+                    "temperature": config.temperature,
+                    "response_format": {"type": "json_object"},
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are an audio-drama sound designer. Return only valid JSON. "
+                                "Use only allowed event types and avoid sound effects that would cover dialogue."
+                            ),
+                        },
+                        {"role": "user", "content": prompt},
+                    ],
+                },
+                timeout=config.timeout_seconds,
+            )
+        except requests.RequestException as exc:
+            last_error = exc
+            if attempt >= max_attempts:
+                raise RuntimeError(
+                    f"Dialogue planner request failed after {attempt} attempt(s): {exc}"
+                ) from exc
+            time.sleep(config.retry_backoff_seconds * attempt)
+            continue
+
+        if response.status_code < 400:
+            break
+
+        if response.status_code not in {429, 500, 502, 503, 504} or attempt >= max_attempts:
+            raise RuntimeError(
+                f"Dialogue planner failed with HTTP {response.status_code}: {response.text[:1000]}"
+            )
+
+        last_error = RuntimeError(
+            f"Dialogue planner transient HTTP {response.status_code}: {response.text[:300]}"
+        )
+        time.sleep(config.retry_backoff_seconds * attempt)
+
+    if response is None:
         raise RuntimeError(
-            f"Dialogue planner failed with HTTP {response.status_code}: {response.text[:1000]}"
+            f"Dialogue planner did not receive a response after {attempt} attempt(s): {last_error}"
         )
     content = response.json()["choices"][0]["message"]["content"]
     try:
@@ -86,6 +115,7 @@ def plan_dialogue_script(
         "elapsed_seconds": round(time.perf_counter() - request_started_at, 2),
         "model": config.model,
         "endpoint": endpoint,
+        "attempts": attempt,
     }
     return sanitized
 

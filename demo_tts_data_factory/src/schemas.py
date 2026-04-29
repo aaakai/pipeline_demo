@@ -267,6 +267,8 @@ class DialoguePlannerConfig:
     model: str = "gpt-4o-mini"
     temperature: float = 0.2
     timeout_seconds: int = 90
+    max_retries: int = 2
+    retry_backoff_seconds: float = 2.0
 
 
 @dataclass

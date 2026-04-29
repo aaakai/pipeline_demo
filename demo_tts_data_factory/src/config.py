@@ -128,6 +128,10 @@ def load_config(config_path: str | Path) -> AppConfig:
                 model=dialogue_planner_data.get("model", "gpt-4o-mini"),
                 temperature=float(dialogue_planner_data.get("temperature", 0.2)),
                 timeout_seconds=int(dialogue_planner_data.get("timeout_seconds", 90)),
+                max_retries=int(dialogue_planner_data.get("max_retries", 2)),
+                retry_backoff_seconds=float(
+                    dialogue_planner_data.get("retry_backoff_seconds", 2.0)
+                ),
             ),
         ),
         mix=MixConfig(

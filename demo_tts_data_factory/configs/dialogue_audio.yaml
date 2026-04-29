@@ -138,7 +138,7 @@ variants:
 tos_input:
   enabled: false
   util_path: ~/tosutil
-  source_uri: tos://modeldata/quinn_audios_full_1211/quinn_audios_full/Alice_processed/A Different Kind of Start/
+  source_uri: tos://modeldata/quinn_audios_full_1211/quinn_audios_full/
   recursive: true
   fail_on_error: true
   clean_before_download: false

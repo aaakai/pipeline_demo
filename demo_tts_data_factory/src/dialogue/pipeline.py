@@ -206,9 +206,10 @@ class DialogueMixPipeline:
         worker_count = self._scene_worker_count(total_scenes)
         if worker_count <= 1:
             manifests: list[dict] = []
+            successful_scenes = 0
             for scene_index, scene in enumerate(target_scenes, start=1):
-                manifests.extend(
-                    self._run_scene(
+                try:
+                    scene_manifests = self._run_scene(
                         source_audio=source_audio,
                         analysis_audio=analysis_audio,
                         duration_ms=duration_ms,
@@ -219,6 +220,20 @@ class DialogueMixPipeline:
                         scene_index=scene_index,
                         total_scenes=total_scenes,
                     )
+                except Exception:
+                    self.logger.exception(
+                        "Scene %s/%s failed for %s: %s",
+                        scene_index,
+                        total_scenes,
+                        source_audio.name,
+                        scene,
+                    )
+                    continue
+                successful_scenes += 1
+                manifests.extend(scene_manifests)
+            if successful_scenes == 0:
+                raise RuntimeError(
+                    f"All scene renders failed for {source_audio.name}. See dialogue pipeline log for details."
                 )
             return manifests
 
@@ -247,9 +262,28 @@ class DialogueMixPipeline:
                 ): scene_index
                 for scene_index, scene in enumerate(target_scenes, start=1)
             }
+            successful_scenes = 0
             for future in as_completed(future_map):
                 scene_index = future_map[future]
-                manifests_by_index[scene_index] = future.result()
+                scene = target_scenes[scene_index - 1]
+                try:
+                    manifests_by_index[scene_index] = future.result()
+                except Exception:
+                    self.logger.exception(
+                        "Scene %s/%s failed for %s: %s",
+                        scene_index,
+                        total_scenes,
+                        source_audio.name,
+                        scene,
+                    )
+                    manifests_by_index[scene_index] = []
+                    continue
+                successful_scenes += 1
+
+        if successful_scenes == 0:
+            raise RuntimeError(
+                f"All scene renders failed for {source_audio.name}. See dialogue pipeline log for details."
+            )
 
         manifests: list[dict] = []
         for scene_index in range(1, total_scenes + 1):
