@@ -55,7 +55,9 @@ class DialogueMixPipeline:
         self.logger.info("Dialogue source audio files: %s", [str(path) for path in source_audios])
         manifests: list[dict] = []
         for source_audio in source_audios:
-            manifests.extend(self._run_single(source_audio))
+            source_manifests = self._run_single(source_audio)
+            manifests.extend(source_manifests)
+            self._archive_processed_input(source_audio)
 
         listening_path = self.project_root / self.config.output_dir / "dialogue_listening_manifest.json"
         write_json(listening_path, manifests)
@@ -470,6 +472,31 @@ class DialogueMixPipeline:
                 path.stat().st_mtime,
             ),
         )
+
+    def _archive_processed_input(self, source_audio: Path) -> None:
+        input_root = (self.project_root / self.config.dialogue_audio.input_dir).resolve()
+        finish_root = ensure_dir((self.project_root / ".finish").resolve())
+        try:
+            relative_path = source_audio.resolve().relative_to(input_root)
+        except ValueError:
+            self.logger.info("Skipping .finish archive for non-input audio: %s", source_audio)
+            return
+
+        target_path = finish_root / relative_path
+        ensure_dir(target_path.parent)
+        if target_path.exists():
+            target_path.unlink()
+        shutil.move(str(source_audio), str(target_path))
+        self.logger.info("Archived processed input to .finish: %s -> %s", source_audio, target_path)
+        self._cleanup_empty_input_dirs(source_audio.parent, input_root)
+
+    def _cleanup_empty_input_dirs(self, current_dir: Path, input_root: Path) -> None:
+        while current_dir != input_root and current_dir.exists():
+            try:
+                current_dir.rmdir()
+            except OSError:
+                break
+            current_dir = current_dir.parent
 
     def _timeline_from_plan(self, plan: dict, duration_ms: int, scene_template) -> list[TimelineEvent]:
         timeline: list[TimelineEvent] = []

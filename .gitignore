@@ -8,5 +8,6 @@ demo_tts_data_factory/.env
 demo_tts_data_factory/.env.*
 demo_tts_data_factory/output/
 demo_tts_data_factory/input/
+demo_tts_data_factory/.finish/
 demo_tts_data_factory/.cache/
 /.codex
